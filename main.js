@@ -12,9 +12,9 @@ app.get("/", (req, res) =>
 */
 
 app.use(express.static("./public"))
-app.get("/about", (req, res) =>
+app.get("/contact", (req, res) =>
 {
-    res.status(200).send("<h1>About</h1>")
+    res.status(200).sendFile(path.resolve(__dirname, "./public/contact.html"))
 });
 
 app.all("/*", (req, res) =>
