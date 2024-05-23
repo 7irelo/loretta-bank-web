@@ -11,7 +11,12 @@ app.get("/", (req, res) =>
 });
 */
 
-app.use(express.static("./public"))
+app.get("/", (req, res) =>
+{
+    res.json([{name: "Messi", number: 10}, {name: "Ronaldo", number: 7}])
+});
+
+// app.use(express.static("./public"))
 app.get("/contact", (req, res) =>
 {
     res.status(200).sendFile(path.resolve(__dirname, "./public/contact.html"))
