@@ -1,122 +1,144 @@
 # Loretta Bank
 
-Welcome to Loretta Bank, an online banking web application built using Node.js and Express. This application provides a secure and user-friendly platform for managing banking activities such as viewing account balances, transferring funds, and managing transactions.
+**Loretta Bank** is an online banking web application built with Node.js and Express, utilizing MySQL for data storage. This application provides basic banking functionalities such as account creation, balance checking, money transfer, and transaction history.
 
 ## Table of Contents
+
 - [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running the Application](#running-the-application)
+- [Installation](#installation)
+- [Configuration](#configuration)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
+- [Database Schema](#database-schema)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Features
 
-- User Authentication (Registration and Login)
-- View Account Balance
-- Transfer Funds between Accounts
-- Transaction History
-- Profile Management
-- Secure Password Handling
+- User registration and authentication
+- Account management (view balance, transaction history)
+- Fund transfer between accounts
+- Secure password storage with hashing
+- Input validation and error handling
 
-## Getting Started
+## Installation
 
-### Prerequisites
+To run this project locally, you will need to have Node.js, npm, and MySQL installed.
 
-Before you begin, ensure you have the following installed on your machine:
-- Node.js (v14.x or higher)
-- npm (v6.x or higher)
-- MongoDB (v4.x or higher)
+1. Clone the repository:
 
-### Installation
+    ```bash
+    git clone https://github.com/7irelo/Loretta_Bank.git
+    cd Loretta_Bank
+    ```
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/7irelo/Loretta_Bank.git
-   cd Loretta_Bank
-   ```
+2. Install the dependencies:
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
-3. **Set up environment variables:**
-   Create a `.env` file in the root directory and add the following variables:
-   ```plaintext
-   PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/loretta-bank
-   JWT_SECRET=your_jwt_secret_key
-   ```
+3. Set up the MySQL database:
 
-### Running the Application
+    - Create a new MySQL database.
+    - Import the database schema from `db/schema.sql`.
 
-1. **Start the MongoDB server:**
-   ```bash
-   mongod
-   ```
+4. Configure the environment variables (see [Configuration](#configuration)).
 
-2. **Start the Node server:**
-   ```bash
-   npm start
-   ```
+5. Start the application:
 
-3. **Visit the application in your browser:**
-   Open `http://localhost:5000`
+    ```bash
+    npm start
+    ```
+
+## Configuration
+
+Create a `.env` file in the root directory and add the following environment variables:
+
+```plaintext
+PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=yourpassword
+DB_NAME=loretta_bank
+JWT_SECRET=your_jwt_secret
+```
+
+- `PORT`: The port on which the server will run.
+- `DB_HOST`: The MySQL database host.
+- `DB_USER`: The MySQL database user.
+- `DB_PASSWORD`: The MySQL database password.
+- `DB_NAME`: The MySQL database name.
+- `JWT_SECRET`: The secret key for JSON Web Token (JWT) generation.
 
 ## Usage
 
-1. **Register a new account:**
-   Go to the registration page and create a new user account.
-
-2. **Login:**
-   Use your credentials to log in to the application.
-
-3. **View account balance:**
-   After logging in, you can view your current account balance on the dashboard.
-
-4. **Transfer funds:**
-   Navigate to the transfer page to send money to another account.
-
-5. **View transaction history:**
-   Check your recent transactions in the transaction history section.
-
-6. **Manage your profile:**
-   Update your personal information and change your password in the profile settings.
+Once the application is running, you can access it at `http://localhost:3000`.
 
 ## API Endpoints
 
-Here are some of the main API endpoints available in Loretta Bank:
+Here are some of the key API endpoints available:
 
-- **User Authentication:**
-  - `POST /api/auth/register` - Register a new user
-  - `POST /api/auth/login` - Login with user credentials
+### User Authentication
 
-- **Account Management:**
-  - `GET /api/accounts` - Get account details
-  - `POST /api/accounts/transfer` - Transfer funds
+- **POST /api/register**
+  - Registers a new user.
+  - Request body: `{ "username": "string", "password": "string" }`
 
-- **Transaction History:**
-  - `GET /api/transactions` - Get transaction history
+- **POST /api/login**
+  - Authenticates a user.
+  - Request body: `{ "username": "string", "password": "string" }`
+
+### Account Management
+
+- **GET /api/account**
+  - Retrieves account details of the authenticated user.
+  - Headers: `{ "Authorization": "Bearer <token>" }`
+
+- **POST /api/account/transfer**
+  - Transfers funds between accounts.
+  - Request body: `{ "toAccountId": "number", "amount": "number" }`
+  - Headers: `{ "Authorization": "Bearer <token>" }`
+
+### Transactions
+
+- **GET /api/transactions**
+  - Retrieves transaction history of the authenticated user.
+  - Headers: `{ "Authorization": "Bearer <token>" }`
+
+## Database Schema
+
+The MySQL database schema includes the following tables:
+
+- **Users**
+  - `id`: Primary key
+  - `username`: Unique username
+  - `password`: Hashed password
+
+- **Accounts**
+  - `id`: Primary key
+  - `userId`: Foreign key to Users table
+  - `balance`: Account balance
+
+- **Transactions**
+  - `id`: Primary key
+  - `fromAccountId`: Foreign key to Accounts table
+  - `toAccountId`: Foreign key to Accounts table
+  - `amount`: Transaction amount
+  - `timestamp`: Transaction timestamp
+
+For detailed schema information, refer to the `db/schema.sql` file.
 
 ## Contributing
 
 Contributions are welcome! Please follow these steps to contribute:
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature-name`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some feature'`)
-5. Push to the branch (`git push origin feature/your-feature-name`)
-6. Open a Pull Request
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes (`git commit -am 'Add new feature'`).
+4. Push to the branch (`git push origin feature/YourFeature`).
+5. Open a pull request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Thank you for using Loretta Bank! If you have any questions or feedback, please open an issue or contact the project maintainers.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
