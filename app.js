@@ -49,9 +49,9 @@ app.get("/", (req, res) =>
     res.status(200).sendFile(path.resolve(__dirname, "./index.html"))
 });
 */
-app.use(express.static("./public"))
-app.get("/", (req, res) => {
-    res.status(200).sendFile(path.resolve(__dirname, "./public/index.html"))
+app.use(express.static('./public'))
+app.get('/', (req, res) => {
+    res.status(200).sendFile(path.resolve(__dirname, './public/index.html'))
     // res.json([{name: "Messi", number: 10}, {name: "Ronaldo", number: 7}])
 });
 
