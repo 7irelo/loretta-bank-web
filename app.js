@@ -3,12 +3,19 @@ const path = require("path")
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
+const { accounts, cards } = require('./data')
+const logger = require('./logger')
+const verifyToken = require('./verifyToken')
 const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 5000;
 
-app.use(bodyParser.json());
+
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('./public'))
+app.use(logger)
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -24,35 +31,101 @@ db.connect((err) => {
     console.log('MySQL Connected...');
 });
 
-function verifyToken(req, res, next) {
-    const token = req.headers['x-access-token'];
-
-    if (!token) {
-        return res.status(403).send('No token provided');
+// Miidleware
+const authorise = (req, res, next) => {
+    const { user } = req.query;
+    if (user === 'eric') {
+        req.user = { name: 'eric', id: 7}
+        console.log(req.query)
+        next()
     }
-
-    jwt.verify(token, 'your_secret_key', (err, decoded) => {
-        if (err) {
-            return res.status(500).send('Failed to authenticate token');
-        }
-
-        req.userId = decoded.id;
-        next();
-    });
+    else {
+        res.status(404).send('Unauthorised')
+    }
 }
 
-
-// app.use(express.static("./public"))
-/*
-app.get("/", (req, res) =>
-{
-    res.status(200).sendFile(path.resolve(__dirname, "./index.html"))
-});
-*/
-app.use(express.static('./public'))
 app.get('/', (req, res) => {
-    res.status(200).sendFile(path.resolve(__dirname, './public/index.html'))
-    // res.json([{name: "Messi", number: 10}, {name: "Ronaldo", number: 7}])
+    res.status(200).sendFile(path.resolve(__dirname, './index.html'))
+});
+
+app.get('/login', (req, res) => {
+    res.status(200).sendFile(path.resolve(__dirname, './login.html'))
+});
+
+// Login a user
+app.post('/login', (req, res) => {
+    console.log(req.body)
+    const { username, password } = req.body;
+
+    const query = `SELECT * FROM users WHERE username = ?`;
+    db.execute(query, [username], (err, results) => {
+        if (err || results.length === 0) {
+            return res.status(400).send('User not found');
+        }
+
+        const user = results[0];
+        const passwordIsValid = bcrypt.compareSync(password, user.password);
+
+        if (!passwordIsValid) {
+            return res.status(401).send('Invalid password');
+        }
+
+        const token = jwt.sign({ id: user.id }, 'your_secret_key', {
+            expiresIn: 86400 // 24 hours
+        });
+
+        res.status(200).send({ auth: true, token });
+    });
+});
+
+app.get('/register', (req, res) => {
+    res.status(200).sendFile(path.resolve(__dirname, './register.html'))
+});
+
+// Register a new user
+app.post('/register', (req, res) => {
+    const { username, password } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 8);
+
+    const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
+    db.execute(query, [username, hashedPassword], (err, results) => {
+        if (err) {
+            return res.status(500).send('Server error');
+        }
+        res.status(201).send('User registered');
+    });
+});
+
+
+app.get('/accounts', (req, res) => {
+    res.json(accounts)
+});
+
+app.get('/accounts/query', (req, res) => {
+    console.log(req.query);
+
+    let sortedAccounts = [...accounts]
+    const { search, limit } = req.query;
+
+    if (search) {
+        sortedAccounts = sortedAccounts.filter((account) => {
+            return account.name.startsWith(search);
+        });
+    }
+    if (limit) {
+        sortedAccounts = sortedAccounts.slice(0, Number(limit))
+    }
+    if (sortedAccounts.length < 1) {
+        return res.status(200).send('No accounts found')
+    }
+    res.status(200).json(sortedAccounts);
+});
+
+app.get('/accounts/:accountID', (req, res) => {
+    const { accountID } = req.params;
+    const singleAccount = accounts.find((account) => account.id === Number(accountID))
+
+    res.json(singleAccount)
 });
 
 // View balance
@@ -105,47 +178,6 @@ app.post('/withdraw', verifyToken, (req, res) => {
             }
             res.status(200).send('Withdrawal successful');
         });
-    });
-});
-
-
-// Register a new user
-app.post('/register', (req, res) => {
-    const { username, password } = req.body;
-    const hashedPassword = bcrypt.hashSync(password, 8);
-
-    const query = 'INSERT INTO users (username, password) VALUES (?, ?)';
-    db.execute(query, [username, hashedPassword], (err, results) => {
-        if (err) {
-            return res.status(500).send('Server error');
-        }
-        res.status(201).send('User registered');
-    });
-});
-
-
-// Login a user
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    const query = 'SELECT * FROM users WHERE username = ?';
-    db.execute(query, [username], (err, results) => {
-        if (err || results.length === 0) {
-            return res.status(400).send('User not found');
-        }
-
-        const user = results[0];
-        const passwordIsValid = bcrypt.compareSync(password, user.password);
-
-        if (!passwordIsValid) {
-            return res.status(401).send('Invalid password');
-        }
-
-        const token = jwt.sign({ id: user.id }, 'your_secret_key', {
-            expiresIn: 86400 // 24 hours
-        });
-
-        res.status(200).send({ auth: true, token });
     });
 });
 
