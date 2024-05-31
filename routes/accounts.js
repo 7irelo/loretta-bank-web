@@ -6,6 +6,9 @@ const {
   updateAccount,
   deleteAccount,
   queryAccounts,
+  getBalance,
+  makeDeposit,
+  makeWithdrawal,
 } = require("../controllers/accounts");
 
 const router = express.Router();
@@ -17,7 +20,10 @@ router.get("/query", queryAccounts);
 // Account
 router.get("/:accountID", getAccount);
 router.put("/:accountID", updateAccount);
-router.delete("/:accountID", deleteAccounts);
+router.delete("/:accountID", deleteAccount);
+router.get("/accountID/balance", getBalance);
+router.post("/accountID/deposit", makeDeposit);
+router.post("/accountID/withdraw", makeWithdrawal);
 
 /*
 router

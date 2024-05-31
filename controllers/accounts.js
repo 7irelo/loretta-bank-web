@@ -62,10 +62,66 @@ const queryAccounts = (req, res) => {
   res.status(200).json(sortedAccounts);
 };
 
+const getBalance = (req, res) => {
+  const query = "SELECT balance FROM users WHERE id = ?";
+  db.execute(query, [req.userId], (err, results) => {
+    if (err) {
+      return res.status(500).send("Server error");
+    }
+    res.status(200).send({ balance: results[0].balance });
+  });
+};
+
+const makeDeposit = (req, res) => {
+  const { amount } = req.body;
+
+  const updateBalance = "UPDATE users SET balance = balance + ? WHERE id = ?";
+  const addTransaction =
+    'INSERT INTO transactions (user_id, amount, type) VALUES (?, ?, "credit")';
+
+  db.execute(updateBalance, [amount, req.userId], (err) => {
+    if (err) {
+      return res.status(500).send("Server error");
+    }
+
+    db.execute(addTransaction, [req.userId, amount], (err) => {
+      if (err) {
+        return res.status(500).send("Server error");
+      }
+      res.status(200).send("Deposit successful");
+    });
+  });
+};
+
+const makeWithdrawal = (req, res) => {
+  const { amount } = req.body;
+
+  const updateBalance =
+    "UPDATE users SET balance = balance - ? WHERE id = ? AND balance >= ?";
+  const addTransaction =
+    'INSERT INTO transactions (user_id, amount, type) VALUES (?, ?, "debit")';
+
+  db.execute(updateBalance, [amount, req.userId, amount], (err, results) => {
+    if (err || results.affectedRows === 0) {
+      return res.status(400).send("Insufficient funds");
+    }
+
+    db.execute(addTransaction, [req.userId, amount], (err) => {
+      if (err) {
+        return res.status(500).send("Server error");
+      }
+      res.status(200).send("Withdrawal successful");
+    });
+  });
+};
+
 module.exports = {
   getAccounts,
   getAccount,
   updateAccount,
   deleteAccount,
   queryAccounts,
+  getBalance,
+  makeDeposit,
+  makeWithdrawal,
 };
