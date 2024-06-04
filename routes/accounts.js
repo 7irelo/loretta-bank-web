@@ -1,5 +1,6 @@
 const express = require("express");
 const { accounts, cards } = require("../data");
+const verifyToken = require("../controllers/verifyToken");
 const {
   getAccounts,
   getAccount,

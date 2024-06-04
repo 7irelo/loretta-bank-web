@@ -1,3 +1,4 @@
+
 const { accounts, cards } = require("../data");
 
 const getAccounts = (req, res) => {

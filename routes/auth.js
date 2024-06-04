@@ -1,10 +1,12 @@
+const User = require("../models/models");
 const express = require("express");
 const path = require("path");
+const bcrypt = require("bcryptjs");
 
 const router = express.Router();
 
 router.get("/login", (req, res) => {
-  res.status(200).sendFile(path.resolve(__dirname, "../login.html"));
+  res.status(200).sendFile(path.resolve(__dirname, "../views/login.html"));
 });
 
 // Login a user
@@ -34,21 +36,39 @@ router.post("/login", (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-  res.status(200).sendFile(path.resolve(__dirname, "./register.html"));
+  res.status(200).sendFile(path.resolve(__dirname, "../views/register.html"));
 });
 
 // Register a new user
 router.post("/register", (req, res) => {
-  const { username, password } = req.body;
-  const hashedPassword = bcrypt.hashSync(password, 8);
+  const hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
-  const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
-  db.execute(query, [username, hashedPassword], (err, results) => {
-    if (err) {
-      return res.status(500).send("Server error");
-    }
-    res.status(201).send("User registered");
+  const userData = {
+    firstName: req.body.firstname,
+    lastName: req.body.lastname,
+    dateOfBirth: req.body.dateOfBirth,
+    idNumber: req.body.idNumber,
+    username: req.body.username,
+    email: req.body.email,
+    password: hashedPassword,
+  };
+
+  const user = User.build(userData);
+
+  user.save().then(() => {
+    console.log("User created successfully");
   });
+
+  // const { username, password } = req.body;
+  // const hashedPassword = bcrypt.hashSync(password, 8);
+
+  // const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
+  // db.execute(query, [username, hashedPassword], (err, results) => {
+  //   if (err) {
+  //     return res.status(500).send("Server error");
+  //   }
+  //   res.status(201).send("User registered");
+  // });
 });
 
 module.exports = router;
