@@ -5,10 +5,10 @@ function verifyToken(req, res, next) {
   const token = req.headers["x-access-token"];
 
   if (!token) {
-    return res.status(403).sendFile(path.resolve(__dirname, "./login.html"));
+    return res.status(200).sendFile(path.resolve(__dirname, "./login.html"));
   }
 
-  jwt.verify(token, "your_secret_key", (err, decoded) => {
+  jwt.verify(token, "password", (err, decoded) => {
     if (err) {
       return res.status(500).send("Failed to authenticate token");
     }

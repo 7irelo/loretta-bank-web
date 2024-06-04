@@ -67,4 +67,4 @@ sequelize.sync().then(() => {
   console.log("tables created");
 });
 
-(module.exports = User), Account;
+module.exports = { User, Account };
