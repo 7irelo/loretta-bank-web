@@ -3,15 +3,8 @@ const bodyParser = require("body-parser");
 const logger = require("./controllers/logger");
 const { User, Account } = require("./models/models");
 const accounts = require("./routes/accounts");
+const authRoute = require("./routes/auth");
 
-const {
-  registerPage,
-  registerUser,
-  loginPage,
-  loginUser,
-  indexPage,
-  errorPage,
-} = require("./controllers/base");
 
 const app = express();
 const port = 5000;
@@ -21,25 +14,11 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("./public"));
 app.use(logger);
-app.use("/api/accounts", accounts);
+app.use("/accounts", accounts);
+app.use("/auth", authRoute);
 
-// Routes
-app.get("/users", async (req, res) => {
-  const users = await User.findAll();
-  res.json(users);
-});
 
-app.get("/register", registerPage);
-
-// Register a new user
-app.post("/register", registerUser);
-
-app.get("/login", loginPage);
-
-// Login a user
-app.post("/login", loginUser);
-
-app.get("/", indexPage);
+app.get("/", () => "Hello world");
 
 // app.all("*", errorPage);
 

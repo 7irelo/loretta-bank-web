@@ -3,26 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+    <title>Document</title>
   </head>
   <body>
-    <form action="/" method="POST">
-      <div class="loginForm">
-        <input
-          type="text"
-          name="username"
-          class="loginInput"
-          placeholder="username"
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          class="loginInput"
-          placeholder="password"
-          required
-        />
-        <input type="submit" placeholder="register" />
+    <form method="POST">
+      <div class="registerForm">
+        <div class="form_field">
+          <label for="username">username</label>
+          <input
+            type="text"
+            name="username"
+            class="registerInput"
+            placeholder="username..."
+            required
+          />
+        </div>
+
+        <div class="form_field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            class="registerInput"
+            placeholder="password..."
+            required
+          />
+        </div>
+        <input type="submit" placeholder="login" />
       </div>
     </form>
   </body>

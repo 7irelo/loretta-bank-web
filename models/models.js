@@ -1,36 +1,42 @@
+const dotenv = require("dotenv");
 const Sequelize = require("sequelize");
+
+dotenv.config();
+
 const sequelize = new Sequelize("lorettabank", "root", "password", {
   host: "localhost",
   dialect: "mysql",
 });
 
 const User = sequelize.define("User", {
-  id: {
-    type: Sequelize.INTEGER,
+  idNumber: {
+    type: Sequelize.STRING,
     primaryKey: true,
-    autoIncrement: true,
   },
   firstName: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(50),
   },
   lastName: {
+    type: Sequelize.STRING(50),
+  },
+  address: {
     type: Sequelize.STRING,
   },
   dateOfBirth: {
     type: Sequelize.DATEONLY,
   },
-  idNumber: {
+  occupation: {
     type: Sequelize.STRING,
-    unique: true,
   },
-  creditScore: {
-    type: Sequelize.FLOAT,
-  },
-  username: {
+  phone: {
     type: Sequelize.STRING,
-    unique: true,
   },
   email: {
+    type: Sequelize.STRING,
+    unique: true,
+    isEmail: true,
+  },
+  username: {
     type: Sequelize.STRING,
     unique: true,
   },
@@ -45,18 +51,18 @@ const Account = sequelize.define("Account", {
     primaryKey: true,
     autoIncrement: true,
   },
+  userId: {
+    type: Sequelize.STRING,
+    references: {
+      model: User,
+      key: "idNumber",
+    },
+  },
   accountType: {
     type: Sequelize.STRING,
   },
   balance: {
     type: Sequelize.DOUBLE,
-  },
-  userId: {
-    type: Sequelize.INTEGER,
-    references: {
-      model: User,
-      key: "id",
-    },
   },
 });
 
