@@ -25,3 +25,7 @@ Content-Type: application/json
     "password": "password"
 }
 
+###
+GET http://localhost:5000/accounts
+Content-Type: application/json
+auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTEwMTEiLCJpYXQiOjE3MTgxNTUzMTQsImV4cCI6MTcxODI0MTcxNH0.FSQ8VABqYDkLqkVIDlGw8DaVJZSEqg85GZJP7ATwtm4

@@ -1,8 +1,7 @@
-
 const { accounts, cards } = require("../data");
 
 const getAccounts = (req, res) => {
-  res.json(accounts);
+  res.json({"accounts": accounts});
 };
 
 const getAccount = (req, res) => {

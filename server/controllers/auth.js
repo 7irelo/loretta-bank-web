@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 const path = require("path");
 const { User, Account } = require("../models/models");
 
@@ -10,7 +10,8 @@ const registerPage = (req, res) => {
 
 // Register user
 const registerUser = async (req, res) => {
-  const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+  const salt = await bcrypt.genSalt(8);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   const user = await User.build({
     firstName: req.body.firstName,
@@ -39,24 +40,24 @@ const loginPage = (req, res) => {
 
 // Login user
 const loginUser = async (req, res) => {
-  const { username, password } = req.body;
-  await User.findOne({ where: { username } }).then((user) => {
-    if (user) {
-      console.log(user.toJSON);
-    } else {
-      console.log("User not found");
-    }
-    const passwordIsValid = bcrypt.compareSync(password, user.password);
-    if (!passwordIsValid) {
-      return res.status(401).send("Invalid password");
-    }
+  const user = await User.findOne({ where: { username: req.body.username } });
+  if (user) {
+    console.log(user.toJSON);
+  } else {
+    console.log("User not found");
+  }
+  const passwordIsValid = await bcrypt.compare(
+    req.body.password,
+    user.password
+  );
+  if (!passwordIsValid) {
+    return res.status(401).send("Invalid password");
+  }
 
-    const token = jwt.sign({ id: user.id }, "password", {
-      expiresIn: 86400, // 24 hours
-    });
-
-    res.status(200).send({ auth: true, token });
+  const token = jwt.sign({ id: user.idNumber }, "token_secret", {
+    expiresIn: 86400, // 24 hours
   });
+  res.header("auth-key", token).status(200).send({ auth: true, token });
 };
 
 module.exports = {

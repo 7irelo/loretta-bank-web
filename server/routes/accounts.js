@@ -19,12 +19,12 @@ router.get("/", getAccounts);
 router.get("/query", queryAccounts);
 
 // Account
-router.get("/:accountID", getAccount);
-router.put("/:accountID", updateAccount);
-router.delete("/:accountID", deleteAccount);
-router.get("/accountID/balance", getBalance);
-router.post("/accountID/deposit", makeDeposit);
-router.post("/accountID/withdraw", makeWithdrawal);
+router.get("/:accountID", verifyToken, getAccount);
+router.put("/:accountID", verifyToken, updateAccount);
+router.delete("/:accountID", verifyToken, deleteAccount);
+router.get("/accountID/balance", verifyToken, getBalance);
+router.post("/accountID/deposit", verifyToken, makeDeposit);
+router.post("/accountID/withdraw", verifyToken, makeWithdrawal);
 
 /*
 router
