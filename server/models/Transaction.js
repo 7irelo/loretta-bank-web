@@ -1,10 +1,8 @@
-// models/Transaction.js
+const { DataTypes, Sequelize } = require('sequelize');
+const sequelize = require('../config/database');
+const Account = require('./account');
 
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const Account = require("./Account");
-
-const Transaction = sequelize.define("Transaction", {
+const Transaction = sequelize.define('Transaction', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -14,29 +12,30 @@ const Transaction = sequelize.define("Transaction", {
     type: DataTypes.INTEGER,
     references: {
       model: Account,
-      key: "id",
+      key: 'id',
     },
-    allowNull: false,
   },
   type: {
-    type: DataTypes.ENUM("credit", "debit"),
+    type: DataTypes.STRING, // 'credit' or 'debit'
     allowNull: false,
   },
   amount: {
     type: DataTypes.DOUBLE,
     allowNull: false,
-    validate: {
-      min: 0,
-    },
   },
   date: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-    allowNull: false,
+    defaultValue: Sequelize.NOW,
   },
   description: {
     type: DataTypes.STRING,
   },
+  journalType: {
+    type: DataTypes.STRING, // 'CPJ', 'CRJ', 'DJ', etc.
+  },
 });
+
+Account.hasMany(Transaction, { foreignKey: 'accountId' });
+Transaction.belongsTo(Account, { foreignKey: 'accountId' });
 
 module.exports = Transaction;
