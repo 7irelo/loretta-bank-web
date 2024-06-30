@@ -1,6 +1,5 @@
 const express = require("express");
-const { accounts, cards } = require("../data");
-const verifyToken = require("../controllers/verifyToken");
+const verifyToken = require("../middlewares/verifyToken");
 const {
   getAccounts,
   getAccount,
@@ -10,28 +9,23 @@ const {
   getBalance,
   makeDeposit,
   makeWithdrawal,
-} = require("../controllers/accounts");
+} = require("../controllers/accountsController");
 
 const router = express.Router();
 
-router.get("/", getAccounts);
+// Apply verifyToken middleware to all routes except the ones listed explicitly
+router.use(verifyToken);
 
+// Public routes
+router.get("/", getAccounts);
 router.get("/query", queryAccounts);
 
-// Account
-router.get("/:accountID", verifyToken, getAccount);
-router.put("/:accountID", verifyToken, updateAccount);
-router.delete("/:accountID", verifyToken, deleteAccount);
-router.get("/accountID/balance", verifyToken, getBalance);
-router.post("/accountID/deposit", verifyToken, makeDeposit);
-router.post("/accountID/withdraw", verifyToken, makeWithdrawal);
-
-/*
-router
-  .route("/:accountID")
-  .get(getAccount)
-  .put(updateAccount)
-  .delete(deleteAccount);
-*/
+// Protected routes
+router.get("/:accountID", getAccount);
+router.put("/:accountID", updateAccount);
+router.delete("/:accountID", deleteAccount);
+router.get("/:accountID/balance", getBalance);
+router.post("/:accountID/deposit", makeDeposit);
+router.post("/:accountID/withdraw", makeWithdrawal);
 
 module.exports = router;
