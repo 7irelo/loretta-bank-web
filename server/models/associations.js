@@ -3,7 +3,9 @@ const Account = require("./Account");
 const Transaction = require("./Transaction");
 const Loan = require("./Loan");
 const CreditCard = require("./CreditCard");
-
+const SavingsAccount = require("./SavingsAccount");
+const FixedDeposit = require("./FixedDeposit");
+const CustomerSupport = require("./CustomerSupport");
 
 User.hasMany(Account, { foreignKey: 'userId' });
 Account.belongsTo(User, { foreignKey: 'userId' });
@@ -33,4 +35,11 @@ FixedDeposit.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(CustomerSupport, { foreignKey: 'userId' });
 CustomerSupport.belongsTo(User, { foreignKey: 'userId' });
 
-module.exports = { User, Account, Transaction, Loan, CreditCard };
+module.exports = { User, 
+                  Account, 
+                  Transaction, 
+                  Loan, 
+                  CreditCard, 
+                  SavingsAccount, 
+                  FixedDeposit, 
+                  CustomerSupport };
