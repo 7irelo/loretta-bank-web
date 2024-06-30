@@ -1,4 +1,6 @@
+const jwt = require("jsonwebtoken");
 const Account = require('../models/models');
+const { Op } = require('sequelize');
 
 const getAccounts = async (req, res) => {
   try {
@@ -63,7 +65,7 @@ const queryAccounts = async (req, res) => {
     if (search) {
       queryOptions = {
         where: {
-          name: { [sequelize.Op.startsWith]: search }
+          name: { [Op.startsWith]: search }
         }
       };
     }
@@ -82,10 +84,9 @@ const queryAccounts = async (req, res) => {
 };
 
 module.exports = {
-  getAccounts,
+  getAccounts
   getAccount,
   updateAccount,
   deleteAccount,
   queryAccounts,
-  // Add other functions like getBalance, makeDeposit, makeWithdrawal here
 };
