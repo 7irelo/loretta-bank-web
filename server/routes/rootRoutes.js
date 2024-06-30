@@ -5,6 +5,6 @@ const verifyToken = require('../middlewares/verifyToken');
 const router = express.Router();
 
 router.get('/', verifyToken, getRoot);
-router.all('*', verifyToken, notFound);
+router.all('*', notFound);
 
 module.exports = router;
