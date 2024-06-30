@@ -1,31 +1,22 @@
-const express = require("express");
-const verifyToken = require("../middlewares/verifyToken");
-const {
+const express = require('express');
+const { 
   getAccounts,
   getAccount,
   updateAccount,
   deleteAccount,
   queryAccounts,
-  getBalance,
-  makeDeposit,
-  makeWithdrawal,
-} = require("../controllers/accountsController");
+  getCPJTransactions,
+  getCRJTransactions } = require('../controllers/accountController');
+const verifyToken = require('../middlewares/verifyToken');
 
 const router = express.Router();
 
-// Apply verifyToken middleware to all routes except the ones listed explicitly
-router.use(verifyToken);
-
-// Public routes
-router.get("/", getAccounts);
-router.get("/query", queryAccounts);
-
-// Protected routes
-router.get("/:accountID", getAccount);
-router.put("/:accountID", updateAccount);
-router.delete("/:accountID", deleteAccount);
-router.get("/:accountID/balance", getBalance);
-router.post("/:accountID/deposit", makeDeposit);
-router.post("/:accountID/withdraw", makeWithdrawal);
+router.get('/', getAccounts);
+router.get('/:accountID', getAccount);
+router.put('/:id', updateAccount);
+router.delete('/:id', deleteAccount);
+router.get('/query', queryAccounts);
+router.get('/transactions/cpj', getCPJTransactions);
+router.get('/transactions/crj', getCRJTransactions);
 
 module.exports = router;
