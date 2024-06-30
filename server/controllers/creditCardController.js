@@ -54,11 +54,9 @@ const deleteCreditCard = async (req, res) => {
   }
 };
 
-const creditCardController = {
+module.exports = {
   createCreditCard,
   getCreditCard,
   updateCreditCard,
   deleteCreditCard,
 };
-
-module.exports = creditCardController;
