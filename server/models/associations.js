@@ -20,6 +20,8 @@ Loan.belongsTo(User, { foreignKey: 'userId' });
 Loan.belongsTo(Account, { foreignKey: 'accountId' });
 
 User.hasMany(CreditCard, { foreignKey: 'userId' });
+Account.hasMany(CreditCard, { foreignKey: 'accountId' });
 CreditCard.belongsTo(User, { foreignKey: 'userId' });
+CreditCard.belongsTo(Account, { foreignKey: 'accountId' });
 
 module.exports = { User, Account, Transaction, Loan, CreditCard };
