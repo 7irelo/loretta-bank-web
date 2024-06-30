@@ -6,4 +6,5 @@ router.get("/register", registerPage);
 router.post("/register", registerUser);
 router.get("/login", loginPage);
 router.post("/login", loginUser)
+
 module.exports = router;
