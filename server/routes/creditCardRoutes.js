@@ -1,17 +1,13 @@
 const express = require('express');
-const { 
-  createCreditCard, 
-  getCreditCard, 
-  updateCreditCard,
-  deleteCreditCard } = require('../controllers/creditCardController');
+const creditCardController = require('../controllers/creditCardController');
 const verifyToken = require('../middlewares/verifyToken');
 
 const router = express.Router();
 router.use(verifyToken);
 
-router.post('/', createCreditCard);
-router.get('/:id', getCreditCard);
-router.put('/:id', updateCreditCard);
-router.delete('/:id', deleteCreditCard);
+router.post('/', creditCardController.createCreditCard);
+router.get('/:id', creditCardController.getCreditCard);
+router.put('/:id', creditCardController.updateCreditCard);
+router.delete('/:id', creditCardController.deleteCreditCard);
 
 module.exports = router;
