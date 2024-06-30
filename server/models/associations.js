@@ -2,7 +2,7 @@ const User = require("./User");
 const Account = require("./Account");
 const Transaction = require("./Transaction");
 const Loan = require("./Loan");
-const CreditCard = require("./Credit");
+const CreditCard = require("./CreditCard");
 
 
 User.hasMany(Account, { foreignKey: 'userId' });
