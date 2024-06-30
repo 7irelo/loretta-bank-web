@@ -1,5 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const User = require('./User');
+const Account = require('./Account');
 
 const CreditCard = sequelize.define("CreditCard", {
   id: {
@@ -12,6 +14,13 @@ const CreditCard = sequelize.define("CreditCard", {
     references: {
       model: User,
       key: "idNumber",
+    },
+  },
+  accountId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Account,
+      key: 'id',
     },
   },
   cardNumber: {
