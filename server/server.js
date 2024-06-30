@@ -19,6 +19,17 @@ app.get("/", indexPage);
 app.all("*", errorPage);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+    return sequelize.sync({ alter: true });
+  })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Unable to connect to the database:', error);
+  });
