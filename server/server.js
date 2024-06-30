@@ -2,18 +2,17 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const logger = require("./middlewares/logger");
+const sequelize = require('./config/database');
 const authRoutes = require("./routes/authRoutes");
 const rootRoutes = require("./routes/rootRoutes");
 const userRoutes = require("./routes/userRoutes");
-const accountRoutes = require("./routes/accounts");
+const accountRoutes = require("./routes/accountRoutes");
 const creditCardRoutes = require("./routes/creditCardRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const loansRoutes = require("./routes/loansRoutes");
 
-const sequelize = require("./config/database");
-
+// Config
 dotenv.config();
-
 const app = express();
 
 // Middleware
@@ -23,17 +22,16 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(logger);
 
 // Routes
-appl.use('/auth', authRoutes);
+app.use('/auth', authRoutes);
 app.use('/', rootRoutes);
 app.use('/users', userRoutes);
 app.use('/accounts', accountRoutes);
 app.use('/credit-cards', creditCardRoutes);
 app.use('/transactions', transactionRoutes);
-app.use('/loans', loanRoutes);
-
-const PORT = process.env.PORT || 3000;
+app.use('/loans', loansRoutes);
 
 // Initialize Sequelize and start server
+const PORT = process.env.PORT || 3000;
 sequelize.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
