@@ -2,9 +2,14 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const logger = require("./middlewares/logger");
-const baseRoutes = require("./routes/base");
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/authRoutes");
+const rootRoutes = require("./routes/rootRoutes");
+const userRoutes = require("./routes/userRoutes");
 const accountRoutes = require("./routes/accounts");
+const creditCardRoutes = require("./routes/creditCardRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
+const loansRoutes = require("./routes/loansRoutes");
+
 const sequelize = require("./config/database");
 
 dotenv.config();
@@ -18,14 +23,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(logger);
 
 // Routes
-app.use("/", baseRoutes);
-app.use("/accounts", accountRoutes);
-app.use("/auth", authRoutes);
-
-// Error handling for undefined routes
-app.use((req, res) => {
-  res.status(404).json({ error: "404 - Not Found" });
-});
+appl.use('/auth', authRoutes);
+app.use('/', rootRoutes);
+app.use('/users', userRoutes);
+app.use('/accounts', accountRoutes);
+app.use('/credit-cards', creditCardRoutes);
+app.use('/transactions', transactionRoutes);
+app.use('/loans', loanRoutes);
 
 const PORT = process.env.PORT || 3000;
 
