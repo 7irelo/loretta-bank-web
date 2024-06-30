@@ -1,7 +1,8 @@
 const express = require("express");
+const { indexPage, errorPage } = require("./controllers/baseController");
 const logger = require("./middlewares/logger");
-const accounts = require("./routes/accountRoutes");
-const authRoute = require("./routes/auth");
+const accountRoute = require("./routes/accountRoutes");
+const authRoute = require("./routes/authRoute");
 
 const app = express();
 
@@ -10,15 +11,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("./public"));
 app.use(logger);
-app.use("/accounts", accounts);
+app.use("/accounts", accountRoute);
 app.use("/auth", authRoute);
 
-
-app.get("/", () => "Hello world");
-
-function errorPage(req, res) {
-  res.status(404).send("404 - Not Found");
-}
+app.get("/", indexPage);
 
 app.all("*", errorPage);
 
