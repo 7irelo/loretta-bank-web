@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Account } = require('../models/associations');
+const { Account, Transaction } = require('../models/associations');
 
 // Fetch all accounts
 const getAccounts = async (req, res) => {
@@ -7,8 +7,8 @@ const getAccounts = async (req, res) => {
     const accounts = await Account.findAll();
     res.status(200).json(accounts);
   } catch (error) {
-    console.error("Error fetching accounts:", error);
-    res.status(500).json({ success: false, message: "Server error", error });
+    console.error('Error fetching accounts:', error);
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -18,12 +18,12 @@ const getAccount = async (req, res) => {
   try {
     const account = await Account.findByPk(accountID);
     if (!account) {
-      return res.status(404).json({ success: false, message: "Account not found" });
+      return res.status(404).json({ success: false, message: 'Account not found' });
     }
     res.status(200).json(account);
   } catch (error) {
     console.error(`Error fetching account with ID ${accountID}:`, error);
-    res.status(500).json({ success: false, message: "Server error", error });
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -34,14 +34,14 @@ const updateAccount = async (req, res) => {
   try {
     const account = await Account.findByPk(id);
     if (!account) {
-      return res.status(404).json({ success: false, message: "Account not found" });
+      return res.status(404).json({ success: false, message: 'Account not found' });
     }
     account.name = name;
     await account.save();
-    res.status(200).json({ success: true, message: "Account updated successfully", account });
+    res.status(200).json({ success: true, message: 'Account updated successfully', account });
   } catch (error) {
     console.error(`Error updating account with ID ${id}:`, error);
-    res.status(500).json({ success: false, message: "Server error", error });
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -51,13 +51,13 @@ const deleteAccount = async (req, res) => {
   try {
     const account = await Account.findByPk(id);
     if (!account) {
-      return res.status(404).json({ success: false, message: "Account not found" });
+      return res.status(404).json({ success: false, message: 'Account not found' });
     }
     await account.destroy();
-    res.status(200).json({ success: true, message: "Account deleted successfully" });
+    res.status(200).json({ success: true, message: 'Account deleted successfully' });
   } catch (error) {
     console.error(`Error deleting account with ID ${id}:`, error);
-    res.status(500).json({ success: false, message: "Server error", error });
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -76,12 +76,34 @@ const queryAccounts = async (req, res) => {
     }
     const accounts = await Account.findAll(queryOptions);
     if (accounts.length === 0) {
-      return res.status(200).json({ success: false, message: "No accounts found" });
+      return res.status(200).json({ success: false, message: 'No accounts found' });
     }
     res.status(200).json(accounts);
   } catch (error) {
-    console.error("Error querying accounts:", error);
-    res.status(500).json({ success: false, message: "Server error", error });
+    console.error('Error querying accounts:', error);
+    res.status(500).json({ success: false, message: 'Server error', error });
+  }
+};
+
+// Fetch transactions for CPJ
+const getCPJTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.findAll({ where: { journalType: 'CPJ' } });
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.error('Error fetching CPJ transactions:', error);
+    res.status(500).json({ success: false, message: 'Server error', error });
+  }
+};
+
+// Fetch transactions for CRJ
+const getCRJTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.findAll({ where: { journalType: 'CRJ' } });
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.error('Error fetching CRJ transactions:', error);
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -91,4 +113,6 @@ module.exports = {
   updateAccount,
   deleteAccount,
   queryAccounts,
+  getCPJTransactions,
+  getCRJTransactions,
 };
