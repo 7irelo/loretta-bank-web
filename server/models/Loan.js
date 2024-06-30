@@ -14,6 +14,13 @@ const Loan = sequelize.define("Loan", {
       key: "idNumber",
     },
   },
+  accountId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Account,
+      key: 'id',
+    },
+  },
   loanType: {
     type: DataTypes.STRING, // e.g., personal, mortgage
   },
@@ -22,6 +29,10 @@ const Loan = sequelize.define("Loan", {
   },
   interestRate: {
     type: DataTypes.FLOAT,
+  },
+  term: {
+    type: DataTypes.INTEGER,
+    allowNull: false, // In months
   },
   startDate: {
     type: DataTypes.DATE,
