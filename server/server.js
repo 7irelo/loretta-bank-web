@@ -14,12 +14,7 @@ app.use(logger);
 app.use("/accounts", accountRoute);
 app.use("/auth", authRoute);
 
-app.get("/", indexPage);
-
-app.all("*", errorPage);
-
 const PORT = process.env.PORT || 3000;
-
 sequelize.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
