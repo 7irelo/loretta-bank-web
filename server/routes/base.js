@@ -1,3 +1,8 @@
-app.get("/", indexPage);
+const express = require("express")
+const router = express.Router();
+const { indexPage, errorPage } = require("../controllers/authController");
 
-app.all("*", errorPage);
+router.get("/", indexPage);
+router.all("*", errorUser);
+
+module.exports = router;
