@@ -10,6 +10,7 @@ const {
 const verifyToken = require('../middlewares/verifyToken');
 
 const router = express.Router();
+router.use(verifyToken);
 
 router.get('/', getAccounts);
 router.get('/:accountID', getAccount);
