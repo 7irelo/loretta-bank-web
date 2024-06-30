@@ -15,7 +15,9 @@ Account.hasMany(Transaction, { foreignKey: 'accountId' });
 Transaction.belongsTo(Account, { foreignKey: 'accountId' });
 
 User.hasMany(Loan, { foreignKey: 'userId' });
+Account.hasMany(Loan, { foreignKey: 'accountId' });
 Loan.belongsTo(User, { foreignKey: 'userId' });
+Loan.belongsTo(Account, { foreignKey: 'accountId' });
 
 User.hasMany(CreditCard, { foreignKey: 'userId' });
 CreditCard.belongsTo(User, { foreignKey: 'userId' });
