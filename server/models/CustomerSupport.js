@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./user');
+const User = require('./User');
 
 const CustomerSupport = sequelize.define('CustomerSupport', {
   id: {
@@ -27,8 +27,5 @@ const CustomerSupport = sequelize.define('CustomerSupport', {
 }, {
   timestamps: true,
 });
-
-User.hasMany(CustomerSupport, { foreignKey: 'userId' });
-CustomerSupport.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = CustomerSupport;
