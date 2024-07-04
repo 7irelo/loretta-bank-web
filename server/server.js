@@ -13,7 +13,8 @@ const loansRoutes = require("./routes/loansRoutes");
 const savingsAccountRoutes = require("./routes/savingsAccountRoutes");
 const fixedDepositRoutes = require("./routes/fixedDepositRoutes");
 const supportTicketRoutes = require("./routes/supportTicketRoutes");
-const paypalRoutes = require('./routes/paypal');
+const paypalRoutes = require('./routes/paypalRoutes');
+const payfastRoutes = require('./routes/payfastRoutes');
 
 // Config
 dotenv.config();
@@ -37,6 +38,7 @@ app.use('/savings-accounts', savingsAccountRoutes);
 app.use('/fixed-deposits', fixedDepositRoutes);
 app.use('/support-tickets', supportTicketRoutes);
 app.use('/api/paypal', paypalRoutes);
+app.use('/api/payfast', payfastRoutes);
 
 // Initialize Sequelize and start server
 const PORT = process.env.PORT || 3000;
