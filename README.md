@@ -1,144 +1,151 @@
 # Loretta Bank
 
-**Loretta Bank** is an online banking web application built with Node.js and Express, utilizing MySQL for data storage. This application provides basic banking functionalities such as account creation, balance checking, money transfer, and transaction history.
+Welcome to Loretta Bank, an online banking application built with Node.js, Express, PostgreSQL, and React. Loretta Bank offers a secure, user-friendly platform for managing your banking needs online.
 
 ## Table of Contents
 
 - [Features](#features)
+- [Tech Stack](#tech-stack)
 - [Installation](#installation)
-- [Configuration](#configuration)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [Database Schema](#database-schema)
 - [Contributing](#contributing)
 - [License](#license)
+- [Contact](#contact)
 
 ## Features
 
-- User registration and authentication
-- Account management (view balance, transaction history)
-- Fund transfer between accounts
-- Secure password storage with hashing
-- Input validation and error handling
+- User Authentication (Sign Up, Log In, Log Out)
+- Account Management (Create, View, Update, Delete Accounts)
+- Fund Transfers (Internal and External)
+- Transaction History
+- Balance Inquiries
+- Responsive Design
+
+## Tech Stack
+
+- **Backend**: Node.js, Express
+- **Database**: PostgreSQL
+- **Frontend**: React
+- **Authentication**: JWT (JSON Web Tokens)
+- **Styling**: CSS, Bootstrap
 
 ## Installation
 
-To run this project locally, you will need to have Node.js, npm, and MySQL installed.
+### Prerequisites
+
+- Node.js and npm installed
+- PostgreSQL installed and running
+- Git installed
+
+### Backend Setup
 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/7irelo/Loretta_Bank.git
-    cd Loretta_Bank
+    git clone https://github.com/7irelo/loretta-bank.git
+    cd loretta-bank
     ```
 
-2. Install the dependencies:
+2. Install dependencies:
 
     ```bash
+    cd backend
     npm install
     ```
 
-3. Set up the MySQL database:
+3. Set up environment variables:
 
-    - Create a new MySQL database.
-    - Import the database schema from `db/schema.sql`.
+    Create a `.env` file in the `backend` directory and add the following:
 
-4. Configure the environment variables (see [Configuration](#configuration)).
+    ```env
+    PORT=5000
+    DATABASE_URL=postgres://username:password@localhost:5432/loretta_bank
+    JWT_SECRET=your_jwt_secret
+    ```
 
-5. Start the application:
+4. Initialize the database:
+
+    ```bash
+    npx sequelize-cli db:create
+    npx sequelize-cli db:migrate
+    ```
+
+5. Start the backend server:
 
     ```bash
     npm start
     ```
 
-## Configuration
+### Frontend Setup
 
-Create a `.env` file in the root directory and add the following environment variables:
+1. Navigate to the frontend directory:
 
-```plaintext
-PORT=3000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=yourpassword
-DB_NAME=loretta_bank
-JWT_SECRET=your_jwt_secret
-```
+    ```bash
+    cd ../frontend
+    ```
 
-- `PORT`: The port on which the server will run.
-- `DB_HOST`: The MySQL database host.
-- `DB_USER`: The MySQL database user.
-- `DB_PASSWORD`: The MySQL database password.
-- `DB_NAME`: The MySQL database name.
-- `JWT_SECRET`: The secret key for JSON Web Token (JWT) generation.
+2. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Set up environment variables:
+
+    Create a `.env` file in the `frontend` directory and add the following:
+
+    ```env
+    REACT_APP_API_URL=http://localhost:5000/api
+    ```
+
+4. Start the frontend server:
+
+    ```bash
+    npm start
+    ```
 
 ## Usage
 
-Once the application is running, you can access it at `http://localhost:3000`.
+- Open your web browser and navigate to `http://localhost:3000`
+- Sign up for a new account or log in with your existing credentials
+- Manage your accounts, transfer funds, and view transaction history
 
 ## API Endpoints
 
-Here are some of the key API endpoints available:
+### Authentication
 
-### User Authentication
+- `POST /api/auth/signup` - Sign up a new user
+- `POST /api/auth/login` - Log in a user
+- `POST /api/auth/logout` - Log out a user
 
-- **POST /api/register**
-  - Registers a new user.
-  - Request body: `{ "username": "string", "password": "string" }`
+### Accounts
 
-- **POST /api/login**
-  - Authenticates a user.
-  - Request body: `{ "username": "string", "password": "string" }`
-
-### Account Management
-
-- **GET /api/account**
-  - Retrieves account details of the authenticated user.
-  - Headers: `{ "Authorization": "Bearer <token>" }`
-
-- **POST /api/account/transfer**
-  - Transfers funds between accounts.
-  - Request body: `{ "toAccountId": "number", "amount": "number" }`
-  - Headers: `{ "Authorization": "Bearer <token>" }`
+- `GET /api/accounts` - Get all accounts for the authenticated user
+- `POST /api/accounts` - Create a new account
+- `GET /api/accounts/:id` - Get a specific account
+- `PUT /api/accounts/:id` - Update a specific account
+- `DELETE /api/accounts/:id` - Delete a specific account
 
 ### Transactions
 
-- **GET /api/transactions**
-  - Retrieves transaction history of the authenticated user.
-  - Headers: `{ "Authorization": "Bearer <token>" }`
-
-## Database Schema
-
-The MySQL database schema includes the following tables:
-
-- **Users**
-  - `id`: Primary key
-  - `username`: Unique username
-  - `password`: Hashed password
-
-- **Accounts**
-  - `id`: Primary key
-  - `userId`: Foreign key to Users table
-  - `balance`: Account balance
-
-- **Transactions**
-  - `id`: Primary key
-  - `fromAccountId`: Foreign key to Accounts table
-  - `toAccountId`: Foreign key to Accounts table
-  - `amount`: Transaction amount
-  - `timestamp`: Transaction timestamp
-
-For detailed schema information, refer to the `db/schema.sql` file.
+- `POST /api/transactions` - Create a new transaction
+- `GET /api/transactions` - Get all transactions for the authenticated user
 
 ## Contributing
 
 Contributions are welcome! Please follow these steps to contribute:
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a pull request.
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/your-feature-name`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature-name`)
+5. Open a pull request
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any inquiries or issues, please contact us at [support@lorettabank.com](mailto:tirelo.eric@gmail.com).
