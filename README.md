@@ -43,7 +43,7 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/7irelo/loretta-bank.git
+    git clone https://github.com/7irelo/loretta-bank-web.git
     cd loretta-bank
     ```
 
