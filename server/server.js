@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const logger = require("./middlewares/logger");
-const sequelize = require('./config/database');
+const { sequelize } = require('./config/database');
 const authRoutes = require("./routes/authRoutes");
 const rootRoutes = require("./routes/rootRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -11,6 +11,9 @@ const creditCardRoutes = require("./routes/creditCardRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const loanRoutes = require("./routes/loanRoutes");
 const fixedDepositRoutes = require("./routes/fixedDepositRoutes");
+const pool = require("./config/database")
+
+console.log("Hello World")
 
 // Config
 dotenv.config();
@@ -31,6 +34,10 @@ app.use('/credit-cards', creditCardRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/loans', loanRoutes);
 app.use('/fixed-deposits', fixedDepositRoutes);
+
+app.get("/test", async (req, res) => {
+  res.send({message: "hello"})
+});
 
 // Initialize Sequelize and start server
 const PORT = process.env.PORT || 3000;

@@ -1,0 +1,62 @@
+.card {
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px hsl(0, 0%, 0%);
+    padding: 20px;
+    margin-top: 10px;
+    margin-top: 10px;
+    text-align: center;
+    width: 95%;
+    height: auto;
+    display: inline-block;
+    background-color:white;
+}
+  
+.cardImage {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%
+}
+  
+.cardTitle {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.accountDetails {
+    display: flex;
+}
+
+.accountBalance {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 40%;
+}
+  
+.cardDescription {
+    text-align: left;
+    font-weight: lighter;
+    padding: 0;
+    margin: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+  
+button {
+
+    border-radius: 5px;
+    width: 100px;
+    height: 40px;
+    color: rgb(48, 79, 253);
+    background-color:white;
+    border: none;
+}
+
+button:hover {
+    background-color: rgba(48, 79, 253, 0.397);
+    color: black;
+}
+
+.actionButtons {
+    display: flex;
+    justify-content: end;
+}

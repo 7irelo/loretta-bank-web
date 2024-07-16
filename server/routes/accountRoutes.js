@@ -3,7 +3,7 @@ const accountController = require('../controllers/accountController');
 const verifyToken = require('../middlewares/verifyToken');
 
 const router = express.Router();
-router.use(verifyToken);
+// router.use(verifyToken);
 
 router.get('/', accountController.getAccounts);
 router.get('/:accountID', accountController.getAccount);

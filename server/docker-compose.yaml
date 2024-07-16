@@ -1,0 +1,12 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: lorettaexpress
+  server:
+    image: loretta-bank-express-server
+    port:
+      - 3000:3000

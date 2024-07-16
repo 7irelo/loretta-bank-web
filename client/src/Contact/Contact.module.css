@@ -1,0 +1,36 @@
+.contact {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.email {
+    display: block;
+    margin: 5px;
+    width: 600px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 10px;
+}
+
+.message {
+    height: 200px;
+    width: 600px;
+    border: none;
+    display: block;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    padding: 10px;
+}
+
+.submit {
+    display: block;
+    padding: 10px 20px;
+    margin: 5px;
+    background: hsl(110, 100%, 75%);
+    border: none;
+    border-radius: 5px;
+}

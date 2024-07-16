@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 const { Account, Transaction } = require('../models/associations');
+const { pool } = require("../config/database")
 
 // Fetch all accounts
 const getAccounts = async (req, res) => {
@@ -11,6 +12,7 @@ const getAccounts = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
+
 
 // Fetch a single account by ID
 const getAccount = async (req, res) => {
