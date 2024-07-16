@@ -44,7 +44,7 @@
 button {
 
     border-radius: 5px;
-    width: 100px;
+    width: 90px;
     height: 40px;
     color: rgb(48, 79, 253);
     background-color:white;
@@ -59,4 +59,11 @@ button:hover {
 .actionButtons {
     display: flex;
     justify-content: end;
+}
+
+@media (max-width: 900px) {
+    .card {
+        width: 100%;
+        padding: 0px;
+    }
 }

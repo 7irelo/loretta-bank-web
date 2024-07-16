@@ -39,6 +39,7 @@ function Header(props) {
                     </div>
                 </ul>
                 </div>
+                <div className={styles.hamburger}><h1>≡</h1></div>
             </div>
             <nav>
                 <ul>{navItems}</ul>

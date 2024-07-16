@@ -6,7 +6,7 @@ footer {
     margin: 0;
     margin-top: 20px;
     padding: 30px;
-    text-align: center
+    text-align: center;
 }
 
 .footerLinks {
@@ -46,4 +46,9 @@ img {
     footer {
         padding: 10px;
     }
+
+    img {
+        display: none;
+    }
+    
 }

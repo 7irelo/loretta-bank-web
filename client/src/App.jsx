@@ -1,51 +1,58 @@
-import Header from "./Header/Header.jsx"
-import Account from "./Account/Account.jsx"
-import Footer from "./Footer/Footer.jsx"
+import React, { useEffect, useState } from 'react';
+import Header from "./Header/Header.jsx";
+import Account from "./Account/Account.jsx";
+import Footer from "./Footer/Footer.jsx";
 
 function App() {
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const accounts = [
-    {
-      id: 5432,
-      user: {
-        name: "Eric",
-        surname: "Ncube",
-        initials: "Ncube E",
-      },
-      name: "MYMOACC",
-      accountNumber: "10 12 843 624 5",
-      availableBalance: 7858.19,
-      latestBalance: 7960.69,
-      imageUrl: "src/assets/cheque.png"
-    },
-    {
-      id: 3302,
-      user: {
-        name: "Eric",
-        surname: "Ncube",
-      },
-      name: "PURESAVE",
-      accountNumber: "10 22 111 183 0",
-      availableBalance: 150450.95,
-      latestBalance: 150150.95,
-      imageUrl: "src/assets/savings.png"
-    },
-  ]
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await fetch('https://localhost:3000/accounts', {
+          headers: {
+            'Authorization': `Bearer YOUR_JWT_TOKEN_HERE`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        setAccounts(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
-        <Header service={accounts[0]}/>
-        <div className="home">
-          <h2>Transacting</h2>
-          <Account account={accounts[0]}/>
-          <h2>Saving and Investing</h2>
-          <Account account={accounts[1]}/>
-          <Footer/>
-        </div>
-        
+      {accounts.length > 0 && <Header service={accounts[0]} />}
+      <div className="home">
+        <h2>Transacting</h2>
+        {accounts.length > 0 && <Account account={accounts[0]} />}
+        <h2>Saving and Investing</h2>
+        {accounts.length > 1 && <Account account={accounts[1]} />}
+        <Footer />
+      </div>
     </div>
-    
-  )
+  );
 }
 
-export default App
+export default App;
