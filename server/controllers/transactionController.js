@@ -1,8 +1,18 @@
-const { Transaction, Account } = require('../models/associations');
+const { pool } = require('../config/database');
 
+// Create a transaction
 const createTransaction = async (req, res) => {
+  const { accountId, type, amount, description, journalType } = req.body;
   try {
-    const transaction = await Transaction.create(req.body);
+    const query = `
+      INSERT INTO transactions (accountId, type, amount, description, journalType)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `;
+    const values = [accountId, type, amount, description, journalType];
+    const { rows } = await pool.query(query, values);
+    const transaction = rows[0];
+
     res.status(201).json({ success: true, transaction });
   } catch (error) {
     console.error("Error creating transaction:", error);
@@ -10,46 +20,50 @@ const createTransaction = async (req, res) => {
   }
 };
 
+// Fetch a single transaction by ID
 const getTransaction = async (req, res) => {
   const { id } = req.params;
   try {
-    const transaction = await Transaction.findByPk(id, { include: [Account] });
+    const query = 'SELECT * FROM transactions WHERE id = $1';
+    const { rows } = await pool.query(query, [id]);
+    const transaction = rows[0];
+
     if (!transaction) {
       return res.status(404).json({ success: false, message: "Transaction not found" });
     }
     res.status(200).json({ success: true, transaction });
   } catch (error) {
-    console.error("Error fetching transaction:", error);
+    console.error(`Error fetching transaction with ID ${id}:`, error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
 
-const updateTransaction = async (req, res) => {
-  const { id } = req.params;
+// Fetch all transactions
+const getTransactions = async (req, res) => {
   try {
-    const transaction = await Transaction.findByPk(id);
-    if (!transaction) {
-      return res.status(404).json({ success: false, message: "Transaction not found" });
-    }
-    await transaction.update(req.body);
-    res.status(200).json({ success: true, transaction });
+    const { rows } = await pool.query('SELECT * FROM transactions');
+    res.status(200).json({ success: true, transactions: rows });
   } catch (error) {
-    console.error("Error updating transaction:", error);
-    res.status(500).json({ success: false, message: "Server error", error });
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
+// Delete a transaction
 const deleteTransaction = async (req, res) => {
   const { id } = req.params;
   try {
-    const transaction = await Transaction.findByPk(id);
+    const query = 'DELETE FROM transactions WHERE id = $1 RETURNING *';
+    const { rows } = await pool.query(query, [id]);
+    const transaction = rows[0];
+
     if (!transaction) {
       return res.status(404).json({ success: false, message: "Transaction not found" });
     }
-    await transaction.destroy();
+
     res.status(200).json({ success: true, message: "Transaction deleted successfully" });
   } catch (error) {
-    console.error("Error deleting transaction:", error);
+    console.error(`Error deleting transaction with ID ${id}:`, error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
@@ -57,6 +71,6 @@ const deleteTransaction = async (req, res) => {
 module.exports = {
   createTransaction,
   getTransaction,
-  updateTransaction,
+  getTransactions,
   deleteTransaction,
 };
