@@ -1,49 +1,24 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
-const User = require('./User');
-const Account = require('./Account');
+const { pool } = require('../config/database');
 
-const Loan = sequelize.define("Loan", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: {
-    type: DataTypes.STRING,
-    references: {
-      model: User,
-      key: "idNumber",
-    },
-  },
-  accountId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Account,
-      key: 'id',
-    },
-  },
-  loanType: {
-    type: DataTypes.STRING, // e.g., personal, mortgage
-  },
-  amount: {
-    type: DataTypes.DOUBLE,
-  },
-  interestRate: {
-    type: DataTypes.FLOAT,
-  },
-  term: {
-    type: DataTypes.INTEGER,
-    allowNull: false, // In months
-  },
-  startDate: {
-    type: DataTypes.DATE,
-  },
-  endDate: {
-    type: DataTypes.DATE,
-  },
-}, {
-  timestamps: true,
-});
+const createLoanTable = async () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS loans (
+      id SERIAL PRIMARY KEY,
+      user_id VARCHAR REFERENCES users(idNumber) NOT NULL,
+      account_id INTEGER REFERENCES accounts(id) NOT NULL,
+      loan_type VARCHAR NOT NULL CHECK (loan_type IN ('Personal', 'Mortgage', 'Auto', 'Student')),
+      amount DOUBLE PRECISION NOT NULL,
+      interest_rate DOUBLE PRECISION NOT NULL,
+      term INTEGER NOT NULL,
+      start_date DATE NOT NULL,
+      end_date DATE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  await pool.query(query);
+};
 
-module.exports = Loan;
+createLoanTable().catch(err => console.error('Error creating loan table:', err));
+
+module.exports = { createLoanTable };
