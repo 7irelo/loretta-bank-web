@@ -1,8 +1,14 @@
-const { Loan, User } = require('../models/associations');
+const { pool } = require('../config/database');
 
-const createLoan = async (req, res) => {
+// Create loan
+const createLoanHandler = async (req, res) => {
+  const { userId, accountId, loanType, amount, interestRate, term, startDate, endDate } = req.body;
   try {
-    const loan = await Loan.create(req.body);
+    const result = await pool.query(
+      'INSERT INTO loans (user_id, account_id, loan_type, amount, interest_rate, term, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [userId, accountId, loanType, amount, interestRate, term, startDate, endDate]
+    );
+    const loan = result.rows[0];
     res.status(201).json({ success: true, loan });
   } catch (error) {
     console.error("Error creating loan:", error);
@@ -10,10 +16,12 @@ const createLoan = async (req, res) => {
   }
 };
 
-const getLoan = async (req, res) => {
+// Get loan
+const getLoanHandler = async (req, res) => {
   const { id } = req.params;
   try {
-    const loan = await Loan.findByPk(id, { include: [User] });
+    const result = await pool.query('SELECT * FROM loans WHERE id = $1', [id]);
+    const loan = result.rows[0];
     if (!loan) {
       return res.status(404).json({ success: false, message: "Loan not found" });
     }
@@ -24,14 +32,19 @@ const getLoan = async (req, res) => {
   }
 };
 
-const updateLoan = async (req, res) => {
+// Update loan
+const updateLoanHandler = async (req, res) => {
   const { id } = req.params;
+  const { loanType, amount, interestRate, term, startDate, endDate } = req.body;
   try {
-    const loan = await Loan.findByPk(id);
+    const result = await pool.query(
+      'UPDATE loans SET loan_type = $1, amount = $2, interest_rate = $3, term = $4, start_date = $5, end_date = $6, updated_at = CURRENT_TIMESTAMP WHERE id = $7 RETURNING *',
+      [loanType, amount, interestRate, term, startDate, endDate, id]
+    );
+    const loan = result.rows[0];
     if (!loan) {
       return res.status(404).json({ success: false, message: "Loan not found" });
     }
-    await loan.update(req.body);
     res.status(200).json({ success: true, loan });
   } catch (error) {
     console.error("Error updating loan:", error);
@@ -39,14 +52,11 @@ const updateLoan = async (req, res) => {
   }
 };
 
-const deleteLoan = async (req, res) => {
+// Delete loan
+const deleteLoanHandler = async (req, res) => {
   const { id } = req.params;
   try {
-    const loan = await Loan.findByPk(id);
-    if (!loan) {
-      return res.status(404).json({ success: false, message: "Loan not found" });
-    }
-    await loan.destroy();
+    await pool.query('DELETE FROM loans WHERE id = $1', [id]);
     res.status(200).json({ success: true, message: "Loan deleted successfully" });
   } catch (error) {
     console.error("Error deleting loan:", error);
@@ -55,8 +65,8 @@ const deleteLoan = async (req, res) => {
 };
 
 module.exports = {
-  createLoan,
-  getLoan,
-  updateLoan,
-  deleteLoan,
+  createLoanHandler,
+  getLoanHandler,
+  updateLoanHandler,
+  deleteLoanHandler,
 };
