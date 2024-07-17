@@ -1,68 +1,25 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const { pool } = require('../config/database');
 
-const User = sequelize.define("User", {
-  idNumber: {
-    type: DataTypes.STRING,
-    primaryKey: true,
-    allowNull: false,
-    unique: true,
-  },
-  firstName: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-  },
-  lastName: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-  },
-  address: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  dateOfBirth: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
-  occupation: {
-    type: DataTypes.STRING,
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true,
-    },
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-}, {
-  indexes: [
-    {
-      unique: true,
-      fields: ['email', 'username', 'idNumber'],
-    },
-  ],
-});
+const createUserTable = async () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS users (
+      idNumber VARCHAR PRIMARY KEY,
+      firstName VARCHAR(50) NOT NULL,
+      lastName VARCHAR(50) NOT NULL,
+      address VARCHAR NOT NULL,
+      dateOfBirth DATE NOT NULL,
+      occupation VARCHAR,
+      phone VARCHAR NOT NULL,
+      email VARCHAR UNIQUE NOT NULL,
+      username VARCHAR UNIQUE NOT NULL,
+      password VARCHAR NOT NULL,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  await pool.query(query);
+};
 
-module.exports = User;
+createUserTable().catch(err => console.error('Error creating user table:', err));
+
+module.exports = { createUserTable };
