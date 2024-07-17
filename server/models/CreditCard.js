@@ -3,7 +3,7 @@ const { sequelize } = require('../config/database');
 const User = require('./User');
 const Account = require('./Account');
 
-const CreditCard = sequelize.define("CreditCard", {
+const Card = sequelize.define("Card", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -43,4 +43,4 @@ const CreditCard = sequelize.define("CreditCard", {
   timestamps: true,
 });
 
-module.exports = CreditCard;
+module.exports = Card;
