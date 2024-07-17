@@ -7,11 +7,12 @@ const accountRoutes = require("./routes/accountRoutes");
 const cardRoutes = require("./routes/cardRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const loanRoutes = require("./routes/loanRoutes");
-const pool = require("./config/database")
+const { createDatabase } = require("./config/db.config")
 
 // Config
 dotenv.config();
 const app = express();
+createDatabase();
 
 // Middleware
 app.use(express.json());

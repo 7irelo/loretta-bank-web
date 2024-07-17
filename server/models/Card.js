@@ -4,7 +4,7 @@ const createCardTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS cards (
       id SERIAL PRIMARY KEY,
-      user_id VARCHAR REFERENCES users(idNumber) NOT NULL,
+      user_id VARCHAR REFERENCES users(id) NOT NULL,
       account_id INTEGER REFERENCES accounts(id) NOT NULL,
       card_number VARCHAR(16) NOT NULL,
       expiry_date DATE NOT NULL,

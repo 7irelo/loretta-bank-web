@@ -4,7 +4,7 @@ const createLoanTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS loans (
       id SERIAL PRIMARY KEY,
-      user_id VARCHAR REFERENCES users(idNumber) NOT NULL,
+      user_id VARCHAR REFERENCES users(id) NOT NULL,
       account_id INTEGER REFERENCES accounts(id) NOT NULL,
       loan_type VARCHAR NOT NULL CHECK (loan_type IN ('Personal', 'Mortgage', 'Auto', 'Student')),
       amount DOUBLE PRECISION NOT NULL,

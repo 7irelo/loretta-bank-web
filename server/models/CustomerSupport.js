@@ -4,7 +4,7 @@ const createCustomerSupportTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS customer_support (
       id SERIAL PRIMARY KEY,
-      user_id VARCHAR REFERENCES users(idNumber) NOT NULL,
+      user_id VARCHAR REFERENCES users(id) NOT NULL,
       query TEXT NOT NULL,
       response TEXT,
       status VARCHAR NOT NULL CHECK (status IN ('Open', 'Pending', 'Resolved', 'Closed')),

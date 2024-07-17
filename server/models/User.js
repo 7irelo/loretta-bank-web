@@ -3,7 +3,7 @@ const { pool } = require('../config/database');
 const createUserTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS users (
-      idNumber VARCHAR PRIMARY KEY,
+      id VARCHAR PRIMARY KEY,
       firstName VARCHAR(50) NOT NULL,
       lastName VARCHAR(50) NOT NULL,
       address VARCHAR NOT NULL,
