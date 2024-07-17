@@ -1,6 +1,6 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { User } = require("../models/associations");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { pool } = require('../config/database');
 
 // Register user
 const registerUser = async (req, res) => {
@@ -8,20 +8,20 @@ const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(8);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-    const user = await User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      dateOfBirth: req.body.dateOfBirth,
-      idNumber: req.body.idNumber,
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword,
-    });
+    const query = `
+      INSERT INTO users (idNumber, firstName, lastName, dateOfBirth, username, email, password)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *;
+    `;
+    const values = [req.body.idNumber, req.body.firstName, req.body.lastName, req.body.dateOfBirth, req.body.username, req.body.email, hashedPassword];
+
+    const { rows } = await pool.query(query, values);
+    const user = rows[0];
 
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user: user.toJSON(),
+      user,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -32,7 +32,9 @@ const registerUser = async (req, res) => {
 // Login user
 const loginUser = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { username: req.body.username } });
+    const query = `SELECT * FROM users WHERE username = $1`;
+    const { rows } = await pool.query(query, [req.body.username]);
+    const user = rows[0];
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
