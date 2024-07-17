@@ -1,46 +1,23 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
-const User = require('./User');
-const Account = require('./Account');
+const { pool } = require('../config/database');
 
-const Card = sequelize.define("Card", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: {
-    type: DataTypes.STRING,
-    references: {
-      model: User,
-      key: "idNumber",
-    },
-  },
-  accountId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Account,
-      key: 'id',
-    },
-  },
-  cardNumber: {
-    type: DataTypes.STRING,
-    unique: true,
-  },
-  expiryDate: {
-    type: DataTypes.DATE,
-  },
-  cvv: {
-    type: DataTypes.STRING,
-  },
-  creditLimit: {
-    type: DataTypes.DOUBLE,
-  },
-  balance: {
-    type: DataTypes.DOUBLE,
-  },
-}, {
-  timestamps: true,
-});
+const createCardTable = async () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS cards (
+      id SERIAL PRIMARY KEY,
+      user_id VARCHAR REFERENCES users(idNumber) NOT NULL,
+      account_id INTEGER REFERENCES accounts(id) NOT NULL,
+      card_number VARCHAR(16) NOT NULL,
+      expiry_date DATE NOT NULL,
+      cvv VARCHAR(3) NOT NULL,
+      credit_limit DOUBLE PRECISION NOT NULL,
+      balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  await pool.query(query);
+};
 
-module.exports = Card;
+createCardTable().catch(err => console.error('Error creating card table:', err));
+
+module.exports = { createCardTable };
