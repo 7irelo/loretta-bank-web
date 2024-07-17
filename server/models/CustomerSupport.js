@@ -1,31 +1,20 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
-const User = require('./User');
+const { pool } = require('../config/database');
 
-const CustomerSupport = sequelize.define('CustomerSupport', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  userId: {
-    type: DataTypes.STRING,
-    references: {
-      model: User,
-      key: 'idNumber',
-    },
-  },
-  query: {
-    type: DataTypes.TEXT,
-  },
-  response: {
-    type: DataTypes.TEXT,
-  },
-  status: {
-    type: DataTypes.STRING(50), // "open", "resolved", "closed"
-  },
-}, {
-  timestamps: true,
-});
+const createCustomerSupportTable = async () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS customer_support (
+      id SERIAL PRIMARY KEY,
+      user_id VARCHAR REFERENCES users(idNumber) NOT NULL,
+      query TEXT NOT NULL,
+      response TEXT,
+      status VARCHAR NOT NULL CHECK (status IN ('Open', 'Pending', 'Resolved', 'Closed')),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  await pool.query(query);
+};
 
-module.exports = CustomerSupport;
+createCustomerSupportTable().catch(err => console.error('Error creating customer support table:', err));
+
+module.exports = { createCustomerSupportTable };
