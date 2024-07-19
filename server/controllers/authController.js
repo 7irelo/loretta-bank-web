@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const query = `
-      INSERT INTO users (idNumber, firstName, lastName, dateOfBirth, username, email, password)
+      INSERT INTO users (firstName, lastName, dateOfBirth, username, email, password)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
     `;
@@ -46,7 +46,7 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user.idNumber }, process.env.TOKEN_SECRET, {
+    const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
       expiresIn: 86400, // 24 hours
     });
 
@@ -57,7 +57,25 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  try {
+    const query = `SELECT * FROM users WHERE id = $1`;
+    const { rows } = await pool.query(query, [req.user.id]);
+    const user = rows[0];
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  getCurrentUser
 };

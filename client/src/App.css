@@ -1,0 +1,71 @@
+.container {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: #003087;
+    padding: 20px;
+    color: white;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+}
+
+.navList {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.navItem {
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.navItem:hover {
+    text-decoration: underline;
+}
+
+.userMenu {
+    display: flex;
+    align-items: center;
+}
+
+.userName {
+    margin-right: 10px;
+}
+
+.signOutButton {
+    background-color: #0071bc;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.signOutButton:hover {
+    background-color: #005fa3;
+}
+
+.mainContent {
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section h2 {
+    color: #333;
+    margin-bottom: 20px;
+}

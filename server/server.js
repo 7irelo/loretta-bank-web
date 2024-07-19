@@ -1,35 +1,61 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
+const helmet = require("helmet");
+const cors = require("cors");
+const morgan = require("morgan");
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
+const { swaggerUi, specs } = require('./swagger');
+const { createDatabase } = require("./config/db.config");
 const logger = require("./middlewares/logger");
+const errorHandler = require("./middlewares/errorHandler");
 const authRoutes = require("./routes/authRoutes");
 const accountRoutes = require("./routes/accountRoutes");
 const cardRoutes = require("./routes/cardRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const loanRoutes = require("./routes/loanRoutes");
-const { createDatabase } = require("./config/db.config")
+const customerSupportRoutes = require('./routes/customerSupportRoutes');
 
 // Config
 dotenv.config();
 const app = express();
+
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: { success: false, message: "Too many requests, please try again later." }
+});
+
+// Database Initialization
 createDatabase();
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api/', apiLimiter);
+app.use(helmet());
+app.use(cors());
+app.use(morgan("dev"));
+app.use(compression());
 app.use(logger);
 
 // Routes
-app.use('/auth', authRoutes);
-app.use('/accounts', accountRoutes);
-app.use('/cards', cardRoutes);
-app.use('/transactions', transactionRoutes);
-app.use('/loans', loanRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/accounts', accountRoutes);
+app.use('/api/cards', cardRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/loans', loanRoutes);
+app.use('/api/support', customerSupportRoutes);
 
 app.get("/test", async (req, res) => {
-  res.send({message: "hello"})
+  res.send({ message: "hello" });
 });
+
+// Error Handling Middleware
+app.use(errorHandler);
 
 // Initialize Sequelize and start server
 const PORT = process.env.PORT || 3000;

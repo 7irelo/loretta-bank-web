@@ -1,58 +1,51 @@
-import PropTypes from "prop-types"
-import styles from "./Header.module.css"
-import logo from "../assets/logo.jpg"
-import dp from "../assets/dp2.png"
+import PropTypes from "prop-types";
+import { Link } from 'react-router-dom';
+import styles from "./Header.module.css";
+import logo from "../assets/logo.jpg";
+import dp from "../assets/dp2.png";
 
 function Header(props) {
-
     const dropMenu = () => {
-        if (document.getElementById("quickLinksDropDown").style.display == "none")
-            {
-                document.getElementById("quickLinksDropDown").style.display = "block"
-            }
-            else
-            {
-                document.getElementById("quickLinksDropDown").style.display = "none"
-            }
-    }
+        const dropDown = document.getElementById("quickLinksDropDown");
+        dropDown.style.display = dropDown.style.display === "none" ? "block" : "none";
+    };
 
-    const navigation = [{id: "home", name: "Home"},
-                        {id: "transact", name: "Transact ▿"}, 
-                        {id: "schedule", name: "Buy ▿"}, 
-                        {id: "location", name: "Apply ▿"}, 
-                        {id: "about", name: "Borrow"}];
-    
+    const navigation = [
+        { id: "home", name: "Home" },
+        { id: "transact", name: "Transact" },
+        { id: "schedule", name: "Buy" },
+        { id: "location", name: "Apply" },
+        { id: "about", name: "Borrow" },
+    ];
 
-    const navItems = navigation.map(navItem => <li key={navItem.id}><a key={navItem.id} href={navItem.id}>{navItem.name}</a></li>)
+    const navItems = navigation.map(navItem => (
+        <li key={navItem.id} className={navItem.id}><a href={`#${navItem.id}`}>{navItem.name}</a></li>
+    ));
+
     return (
         <header>
             <div className={styles.head}>
                 <div className={styles.logo}>
-                    <a href="/"><h1><img src={logo}></img> Loretta Bank</h1></a>
-                </div><hr/>
-                <div>
-                <ul className={styles.auth}>
-                    <div className={styles.authLinks}>
-                        <img src={dp}/>
-                        <li><a href="/">{props.service.user.name}</a></li>
-                        <li><a href="/">Sign out</a></li> 
-                    </div>
-                </ul>
+                    <a href="/"><img src={logo} alt="Loretta Bank Logo" /><h1>Loretta Bank</h1></a>
+                </div>
+                <div className={styles.auth}>
+                    <img src={dp} alt="User Profile" />
+                    <li><Link to="/user">{props.user.firstName}</Link></li>
+                    <li><a href="/">Sign out</a></li>
                 </div>
                 <div className={styles.hamburger}><h1>≡</h1></div>
             </div>
             <nav>
                 <ul>{navItems}</ul>
-                <a><button className={styles.quickLinks} id="quickLinks" onClick={dropMenu}>QuickLinks ▿</button></a>
+                <button className={styles.quickLinks} id="quickLinks" onClick={dropMenu}>QuickLinks</button>
                 <div className={styles.quickLinksDropDown} id="quickLinksDropDown">
                     <ul>
-                        <a>Offshore banking</a>
-                        <a>Online Share Trading</a>
-                        <a>Motor and household insurance</a>
-                        <a>AutoShare/Tax Free Invest</a>
-                        <a>BizFlex Accounts</a>
+                        <li><a href="#">Offshore banking</a></li>
+                        <li><a href="#">Online Share Trading</a></li>
+                        <li><a href="#">Motor and household insurance</a></li>
+                        <li><a href="#">AutoShare/Tax Free Invest</a></li>
+                        <li><a href="#">BizFlex Accounts</a></li>
                     </ul>
-                    
                 </div>
             </nav>
         </header>
@@ -60,7 +53,7 @@ function Header(props) {
 }
 
 Header.propTypes = {
-    service: PropTypes.object
-}
+    user: PropTypes.object.isRequired,
+};
 
-export default Header
+export default Header;

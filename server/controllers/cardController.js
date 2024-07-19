@@ -1,14 +1,18 @@
 const { pool } = require('../config/database');
 
-// Create card
 const createCardHandler = async (req, res) => {
-  const { userId, accountId, cardNumber, expiryDate, cvv, creditLimit, balance } = req.body;
+  const { accountId, cardNumber, expiryDate, cvv, cardType } = req.body;
+
   try {
-    const result = await pool.query(
-      'INSERT INTO cards (user_id, account_id, card_number, expiry_date, cvv, credit_limit, balance) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [userId, accountId, cardNumber, expiryDate, cvv, creditLimit, balance]
-    );
-    const card = result.rows[0];
+    const query = `
+      INSERT INTO cards (account_id, card_number, expiry_date, cvv, card_type)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `;
+    const values = [accountId, cardNumber, expiryDate, cvv, cardType];
+    const { rows } = await pool.query(query, values);
+    const card = rows[0];
+
     res.status(201).json({ success: true, card });
   } catch (error) {
     console.error("Error creating card:", error);
@@ -16,50 +20,73 @@ const createCardHandler = async (req, res) => {
   }
 };
 
-// Get card
 const getCardHandler = async (req, res) => {
   const { id } = req.params;
+
   try {
-    const result = await pool.query('SELECT * FROM cards WHERE id = $1', [id]);
-    const card = result.rows[0];
+    const query = `
+      SELECT * FROM cards
+      WHERE id = $1 AND account_id IN (SELECT id FROM accounts WHERE user_id = $2)
+    `;
+    const { rows } = await pool.query(query, [id, req.user.id]);
+    const card = rows[0];
+
     if (!card) {
       return res.status(404).json({ success: false, message: "Card not found" });
     }
+
     res.status(200).json({ success: true, card });
   } catch (error) {
-    console.error("Error fetching card:", error);
+    console.error(`Error fetching card with ID ${id}:`, error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
 
-// Update card
 const updateCardHandler = async (req, res) => {
   const { id } = req.params;
-  const { cardNumber, expiryDate, cvv, creditLimit, balance } = req.body;
+  const { cardNumber, expiryDate, cvv, cardType } = req.body;
+
   try {
-    const result = await pool.query(
-      'UPDATE cards SET card_number = $1, expiry_date = $2, cvv = $3, credit_limit = $4, balance = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
-      [cardNumber, expiryDate, cvv, creditLimit, balance, id]
-    );
-    const card = result.rows[0];
+    const query = `
+      UPDATE cards
+      SET card_number = $1, expiry_date = $2, cvv = $3, card_type = $4, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $5 AND account_id IN (SELECT id FROM accounts WHERE user_id = $6)
+      RETURNING *;
+    `;
+    const values = [cardNumber, expiryDate, cvv, cardType, id, req.user.id];
+    const { rows } = await pool.query(query, values);
+    const card = rows[0];
+
     if (!card) {
       return res.status(404).json({ success: false, message: "Card not found" });
     }
-    res.status(200).json({ success: true, card });
+
+    res.status(200).json({ success: true, message: "Card updated successfully", card });
   } catch (error) {
-    console.error("Error updating card:", error);
+    console.error(`Error updating card with ID ${id}:`, error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
 
-// Delete card
 const deleteCardHandler = async (req, res) => {
   const { id } = req.params;
+
   try {
-    await pool.query('DELETE FROM cards WHERE id = $1', [id]);
+    const query = `
+      DELETE FROM cards
+      WHERE id = $1 AND account_id IN (SELECT id FROM accounts WHERE user_id = $2)
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(query, [id, req.user.id]);
+    const card = rows[0];
+
+    if (!card) {
+      return res.status(404).json({ success: false, message: "Card not found" });
+    }
+
     res.status(200).json({ success: true, message: "Card deleted successfully" });
   } catch (error) {
-    console.error("Error deleting card:", error);
+    console.error(`Error deleting card with ID ${id}:`, error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };

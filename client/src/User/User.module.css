@@ -1,0 +1,28 @@
+.userProfile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 300px;
+    margin: auto;
+  }
+  
+  .profilePic {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin: 5px 0;
+  }
+  

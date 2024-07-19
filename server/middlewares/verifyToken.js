@@ -8,7 +8,7 @@ function verifyToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.TOKEN_SECRET); // Use environment variable for token secret
+    const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
     req.user = decoded;
     next();
   } catch (error) {

@@ -4,12 +4,12 @@ const createTransactionTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS transactions (
       id SERIAL PRIMARY KEY,
-      accountId INTEGER REFERENCES accounts(id),
+      account_id INTEGER REFERENCES accounts(id),
       type VARCHAR NOT NULL,
       amount DOUBLE PRECISION NOT NULL,
       date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       description VARCHAR,
-      journalType VARCHAR
+      journal_type VARCHAR
     );
   `;
   await pool.query(query);

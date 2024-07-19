@@ -1,9 +1,34 @@
 const { pool } = require('../config/database');
 
-// Fetch all accounts
+// Create Account
+const createAccount = async (req, res) => {
+  try {
+    const query = `
+      INSERT INTO accounts (user_id, account_type)
+      VALUES ($1, $2)
+      RETURNING *;
+    `;
+    const values = [req.user.id, req.body.account_type];
+
+    const { rows } = await pool.query(query, values);
+    const user = rows[0];
+
+    res.status(201).json({
+      success: true,
+      message: "Account created successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Error creating account:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+// Fetch all accounts for the logged-in user
 const getAccounts = async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM accounts');
+    const query = 'SELECT * FROM accounts WHERE user_id = $1';
+    const { rows } = await pool.query(query, [req.user.id]);
     res.status(200).json(rows);
   } catch (error) {
     console.error('Error fetching accounts:', error);
@@ -13,10 +38,10 @@ const getAccounts = async (req, res) => {
 
 // Fetch a single account by ID
 const getAccount = async (req, res) => {
-  const { accountId } = req.params;
+  const { id } = req.params;
   try {
-    const query = 'SELECT * FROM accounts WHERE id = $1';
-    const { rows } = await pool.query(query, [accountId]);
+    const query = 'SELECT * FROM accounts WHERE id = $1 AND user_id = $2';
+    const { rows } = await pool.query(query, [id, req.user.id]);
     const account = rows[0];
 
     if (!account) {
@@ -24,7 +49,7 @@ const getAccount = async (req, res) => {
     }
     res.status(200).json(account);
   } catch (error) {
-    console.error(`Error fetching account with ID ${accountId}:`, error);
+    console.error(`Error fetching account with ID ${id}:`, error);
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -36,10 +61,10 @@ const updateAccount = async (req, res) => {
   try {
     const query = `
       UPDATE accounts SET accountType = $1, balance = $2, accountStatus = $3, updatedAt = CURRENT_TIMESTAMP
-      WHERE id = $4
+      WHERE id = $4 AND user_id = $5
       RETURNING *;
     `;
-    const values = [accountType, balance, accountStatus, id];
+    const values = [accountType, balance, accountStatus, id, req.user.id];
     const { rows } = await pool.query(query, values);
     const account = rows[0];
 
@@ -58,8 +83,8 @@ const updateAccount = async (req, res) => {
 const deleteAccount = async (req, res) => {
   const { id } = req.params;
   try {
-    const query = 'DELETE FROM accounts WHERE id = $1 RETURNING *';
-    const { rows } = await pool.query(query, [id]);
+    const query = 'DELETE FROM accounts WHERE id = $1 AND user_id = $2 RETURNING *';
+    const { rows } = await pool.query(query, [id, req.user.id]);
     const account = rows[0];
 
     if (!account) {
@@ -74,6 +99,7 @@ const deleteAccount = async (req, res) => {
 };
 
 module.exports = {
+  createAccount,
   getAccounts,
   getAccount,
   updateAccount,

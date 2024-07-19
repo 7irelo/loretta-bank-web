@@ -5,7 +5,7 @@ const createTransaction = async (req, res) => {
   const { accountId, type, amount, description, journalType } = req.body;
   try {
     const query = `
-      INSERT INTO transactions (accountId, type, amount, description, journalType)
+      INSERT INTO transactions (account_id, type, amount, description, journal_type)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
     `;
@@ -24,8 +24,8 @@ const createTransaction = async (req, res) => {
 const getTransaction = async (req, res) => {
   const { id } = req.params;
   try {
-    const query = 'SELECT * FROM transactions WHERE id = $1';
-    const { rows } = await pool.query(query, [id]);
+    const query = 'SELECT * FROM transactions WHERE id = $1 AND account_id IN (SELECT id FROM accounts WHERE user_id = $2)';
+    const { rows } = await pool.query(query, [id, req.user.id]);
     const transaction = rows[0];
 
     if (!transaction) {
@@ -38,10 +38,11 @@ const getTransaction = async (req, res) => {
   }
 };
 
-// Fetch all transactions
+// Fetch all transactions for the logged-in user
 const getTransactions = async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM transactions');
+    const query = 'SELECT * FROM transactions WHERE account_id IN (SELECT id FROM accounts WHERE user_id = $1)';
+    const { rows } = await pool.query(query, [req.user.id]);
     res.status(200).json({ success: true, transactions: rows });
   } catch (error) {
     console.error('Error fetching transactions:', error);
@@ -53,8 +54,8 @@ const getTransactions = async (req, res) => {
 const deleteTransaction = async (req, res) => {
   const { id } = req.params;
   try {
-    const query = 'DELETE FROM transactions WHERE id = $1 RETURNING *';
-    const { rows } = await pool.query(query, [id]);
+    const query = 'DELETE FROM transactions WHERE id = $1 AND account_id IN (SELECT id FROM accounts WHERE user_id = $2) RETURNING *';
+    const { rows } = await pool.query(query, [id, req.user.id]);
     const transaction = rows[0];
 
     if (!transaction) {
