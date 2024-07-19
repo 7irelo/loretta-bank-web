@@ -8,14 +8,14 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { swaggerUi, specs } = require('./swagger');
 const { createDatabase } = require("./config/db.config");
-const logger = require("./middlewares/logger");
-const errorHandler = require("./middlewares/errorHandler");
-const authRoutes = require("./routes/authRoutes");
-const accountRoutes = require("./routes/accountRoutes");
-const cardRoutes = require("./routes/cardRoutes");
-const transactionRoutes = require("./routes/transactionRoutes");
-const loanRoutes = require("./routes/loanRoutes");
-const customerSupportRoutes = require('./routes/customerSupportRoutes');
+const logger = require("./middleware/logger");
+const errorHandler = require("./middleware/errorHandler");
+const authRoutes = require("./route/authRoutes");
+const accountRoutes = require("./route/accountRoutes");
+const cardRoutes = require("./route/cardRoutes");
+const transactionRoutes = require("./route/transactionRoutes");
+const loanRoutes = require("./route/loanRoutes");
+const customerSupportRoutes = require('./route/customerSupportRoutes');
 
 // Config
 dotenv.config();

@@ -1,10 +1,10 @@
-const { dropTablesAndSequences } = require("../models/DropTables");
-const { createUserTable } = require("../models/User");
-const { createAccountTable } = require("../models/Account");
-const { createTransactionTable } = require("../models/Transaction");
-const { createCardTable } = require("../models/Card");
-const { createLoanTable } = require("../models/Loan");
-const { createCustomerSupportTable } = require("../models/CustomerSupport");
+const { dropTablesAndSequences } = require("../model/DropTables");
+const { createUserTable } = require("../model/User");
+const { createAccountTable } = require("../model/Account");
+const { createTransactionTable } = require("../model/Transaction");
+const { createCardTable } = require("../model/Card");
+const { createLoanTable } = require("../model/Loan");
+const { createCustomerSupportTable } = require("../model/CustomerSupport");
 
 const createDatabase = async () => {
   try {
