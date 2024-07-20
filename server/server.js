@@ -28,7 +28,7 @@ const apiLimiter = rateLimit({
 });
 
 // Database Initialization
-createDatabase();
+// createDatabase();
 
 // Middleware
 app.use(express.json());

@@ -9,11 +9,11 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     const query = `
-      INSERT INTO users (firstName, lastName, dateOfBirth, username, email, password)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO users (id, first_name, last_name, email, date_of_birth, address, occupation, phone, username, password)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *;
     `;
-    const values = [req.body.idNumber, req.body.firstName, req.body.lastName, req.body.dateOfBirth, req.body.username, req.body.email, hashedPassword];
+    const values = [req.body.id, req.body.firstName, req.body.lastName, req.body.email, req.body.dateOfBirth, req.body.address, req.body.occupation, req.body.phone, req.body.username, hashedPassword];
 
     const { rows } = await pool.query(query, values);
     const user = rows[0];
@@ -46,7 +46,7 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
+    const token = jwt.sign({ id: user.id }, process.env.JWT_TOKEN_SECRET, {
       expiresIn: 86400, // 24 hours
     });
 
