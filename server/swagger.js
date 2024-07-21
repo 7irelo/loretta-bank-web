@@ -7,13 +7,13 @@ const options = {
     info: {
       title: "Loretta Bank API",
       version: "1.0.0",
-      description: "API documentation for Loretta Bank"
+      description: "API documentation for Loretta Bank",
     },
     servers: [
       {
         url: "http://localhost:3000",
-        description: "Local server"
-      }
+        description: "Local server",
+      },
     ],
     components: {
       securitySchemes: {
@@ -21,19 +21,19 @@ const options = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-        }
-      }
+        },
+      },
     },
     security: [{
-      bearerAuth: []
+      bearerAuth: [],
     }],
   },
-  apis: ["./route/*.js"], // Adjust path if necessary
+  apis: ["./route/*.js"], // Ensure this path correctly points to your route files
 };
 
 const specs = swaggerJsDoc(options);
 
 module.exports = {
   swaggerUi,
-  specs
+  specs,
 };
