@@ -1,27 +1,36 @@
 import PropTypes from 'prop-types';
 import styles from './Account.module.css';
 
-function Account(props) {
+function Account({ account }) {
+  if (!account) {
+    return <div>Account data is not available</div>;
+  }
+
+  const accountNumber = account.account_number ? account.account_number.replaceAll(' ', '-') : 'N/A';
+  const userName = account.user ? `${account.user.last_name.toUpperCase()} ${account.user.first_name.charAt(0)}` : 'N/A';
+
   return (
     <div className={styles.card} id="card">
       <div className={styles.accountDetails}>
-        <img src={props.account.image_url} alt="account picture" className={styles.cardImage} />
+        <img src={account.image_url} alt="account picture" className={styles.cardImage} />
         <div className={styles.cardDescription}>
-          <p>{props.account.name}</p>
-          <p><small>Current Account {props.account.account_number.replaceAll(' ', '-')}</small></p>
-          <small>Name: {props.account.user.surname.toUpperCase()} {props.account.user.name.charAt(0)}</small>
+          <p>{account.name}</p>
+          <p><small>Current Account {accountNumber}</small></p>
+          <small>Name: {userName}</small>
         </div>
-      </div><hr/>
+      </div>
+      <hr />
       <div className={styles.accountBalance}>
         <div>
           <p>Available balance</p>
-          <p>R{props.account.available_balance}</p>
+          <p>R{account.available_balance}</p>
         </div>
         <div>
           <p>Latest balance</p>
-          <p>R{props.account.latest_balance}</p>
+          <p>R{account.latest_balance}</p>
         </div>
-      </div><hr/>
+      </div>
+      <hr />
       <div className={styles.actionButtons}>
         <a href=""><button className={styles.learnMore}>PAY ▿</button></a>
         <a href=""><button className={styles.learnMore}>TRANSFER</button></a>

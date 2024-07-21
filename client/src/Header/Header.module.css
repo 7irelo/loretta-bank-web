@@ -25,8 +25,8 @@ header a {
 }
 
 .logo img {
-    width: 30px; /* Adjust the width as needed */
-    height: auto; /* Maintain aspect ratio */
+    width: 30px;
+    height: auto;
     border-radius: 5px;
     transition: transform 0.3s ease;
     display: inline;
@@ -74,6 +74,29 @@ header a {
     font-weight: bold;
 }
 
+.signOutContainer {
+    display: flex;
+    align-items: center;
+}
+
+.signOutButton {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.lockIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    filter: grayscale(100%);
+}
+
 .hamburger {
     display: none;
     margin-right: 20px;
@@ -110,14 +133,10 @@ nav ul li a {
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-nav ul li a::after {
-    content: ""; /* Remove downward arrow from Home and Borrow */
-}
-
 nav ul li.transact a::after,
 nav ul li.schedule a::after,
 nav ul li.location a::after {
-    content: " ▾"; /* Downward arrow for Transact, Buy, and Apply */
+    content: " ▾";
     font-size: 1.2rem;
     margin-left: 5px;
     color: #FFFFFF;
@@ -130,7 +149,7 @@ nav ul li a:hover {
 }
 
 .quickLinks {
-    width: 150px; /* Adjusted width for better spacing */
+    width: 150px;
     height: 35px;
     border: none;
     border-radius: 5px;
@@ -149,7 +168,7 @@ nav ul li a:hover {
 }
 
 .quickLinks::after {
-    content: " ▾"; /* Downward arrow */
+    content: " ▾";
     font-size: 1.2rem;
     margin-left: 5px;
     color: #034078;
@@ -162,15 +181,21 @@ nav ul li a:hover {
 
 .quickLinksDropDown {
     position: absolute;
-    top: 190px;
+    top: 115px;
     right: 30px;
     background: linear-gradient(90deg, #012A4A, #034078);
     border-radius: 5px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    display: none;
     text-align: left;
     z-index: 1000;
-    animation: fadeIn 0.3s ease-in-out;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s ease-in-out;
+}
+
+.quickLinksDropDown.show {
+    visibility: visible;
+    opacity: 1;
 }
 
 @keyframes fadeIn {

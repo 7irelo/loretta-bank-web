@@ -4,6 +4,7 @@ const createAccountTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS accounts (
       id SERIAL PRIMARY KEY,
+      account_number VARCHAR(13) NOT NULL,
       name VARCHAR NOT NULL,
       user_id VARCHAR REFERENCES users(id) NOT NULL,
       account_type VARCHAR NOT NULL CHECK (account_type IN ('Savings', 'Cheque', 'Credit')),

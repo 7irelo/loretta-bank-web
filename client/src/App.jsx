@@ -12,14 +12,11 @@ function App() {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // localStorage.clear();
-
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        console.log(token);
         if (!token) {
           setLoading(false);
           return;
@@ -50,6 +47,7 @@ function App() {
         }
 
         const accountsData = await accountsResponse.json();
+        console.log(accountsData)
         setAccounts(accountsData);
       } catch (error) {
         setError(error.message);
@@ -60,6 +58,15 @@ function App() {
 
     fetchData();
   }, []);
+
+  const groupedAccounts = accounts.reduce((acc, account) => {
+    const { account_type } = account;
+    if (!acc[account_type]) {
+      acc[account_type] = [];
+    }
+    acc[account_type].push(account);
+    return acc;
+  }, {});
 
   if (loading) {
     return <div>Loading...</div>;
@@ -78,10 +85,15 @@ function App() {
             path="/"
             element={user ? (
               <div className="home">
-                <h2>Transacting</h2>
-                {accounts.length > 0 && <Account account={accounts[0]} />}
-                <h2>Saving and Investing</h2>
-                {accounts.length > 1 && <Account account={accounts[1]} />}
+                <h2>Accounts</h2>
+                {Object.keys(groupedAccounts).map((accountType) => (
+                  <div key={accountType}>
+                    <h3>{accountType}</h3>
+                    {groupedAccounts[accountType].map((account, index) => (
+                      <Account key={index} account={account} />
+                    ))}
+                  </div>
+                ))}
                 <Footer />
               </div>
             ) : (

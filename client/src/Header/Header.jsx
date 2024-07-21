@@ -1,13 +1,19 @@
-import PropTypes from "prop-types";
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from "./Header.module.css";
 import logo from "../assets/logo.jpg";
 import dp from "../assets/dp2.png";
+import lockIcon from "../assets/lock.svg";
 
 function Header(props) {
-    const dropMenu = () => {
-        const dropDown = document.getElementById("quickLinksDropDown");
-        dropDown.style.display = dropDown.style.display === "none" ? "block" : "none";
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const navigate = useNavigate();
+
+    const handleSignOut = () => {
+        localStorage.removeItem('auth-token');
+        navigate('/login');
     };
 
     const navigation = [
@@ -22,6 +28,25 @@ function Header(props) {
         <li key={navItem.id} className={navItem.id}><a href={`#${navItem.id}`}>{navItem.name}</a></li>
     ));
 
+    const toggleDropdown = (event) => {
+        event.stopPropagation();
+        setIsDropdownOpen(prev => !prev);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target) && !event.target.closest('.quickLinks')) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
         <header>
             <div className={styles.head}>
@@ -30,15 +55,21 @@ function Header(props) {
                 </div>
                 <div className={styles.auth}>
                     <img src={dp} alt="User Profile" />
-                    <li><Link to="/user">{props.user.firstName}</Link></li>
-                    <li><a href="/">Sign out</a></li>
+                    <li><Link to="/user">{props.user.first_name}</Link></li>
+                    <div className={styles.signOutContainer}>
+                        <button onClick={handleSignOut} className={styles.signOutButton}>Sign out</button>
+                        <img src={lockIcon} alt="Lock Icon" className={styles.lockIcon} />
+                    </div>
                 </div>
                 <div className={styles.hamburger}><h1>≡</h1></div>
             </div>
             <nav>
                 <ul>{navItems}</ul>
-                <button className={styles.quickLinks} id="quickLinks" onClick={dropMenu}>QuickLinks</button>
-                <div className={styles.quickLinksDropDown} id="quickLinksDropDown">
+                <button className={styles.quickLinks} onClick={toggleDropdown}>QuickLinks</button>
+                <div
+                    className={`${styles.quickLinksDropDown} ${isDropdownOpen ? styles.show : ''}`}
+                    ref={dropdownRef}
+                >
                     <ul>
                         <li><a href="#">Offshore banking</a></li>
                         <li><a href="#">Online Share Trading</a></li>
