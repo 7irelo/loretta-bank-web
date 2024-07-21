@@ -82,7 +82,7 @@ router.use(verifyToken);
  *       500:
  *         description: Server error
  */
-router.post('/', loanController.createLoan);
+router.post('/', loanController.createLoanHandler);
 
 /**
  * @swagger
@@ -96,7 +96,7 @@ router.post('/', loanController.createLoan);
  *       500:
  *         description: Server error
  */
-router.get('/', loanController.getLoans);
+// router.get('/', loanController.getLoans);
 
 /**
  * @swagger
@@ -119,7 +119,7 @@ router.get('/', loanController.getLoans);
  *       500:
  *         description: Server error
  */
-router.get('/:id', loanController.getLoan);
+router.get('/:id', loanController.getLoanHandler);
 
 /**
  * @swagger
@@ -142,6 +142,6 @@ router.get('/:id', loanController.getLoan);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', loanController.deleteLoan);
+router.delete('/:id', loanController.deleteLoanHandler);
 
 module.exports = router;

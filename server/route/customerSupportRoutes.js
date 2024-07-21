@@ -57,7 +57,7 @@ router.use(verifyToken);
  *       500:
  *         description: Server error
  */
-router.post('/', customerSupportController.createSupportRequest);
+router.post('/', customerSupportController.createSupport);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.post('/', customerSupportController.createSupportRequest);
  *       500:
  *         description: Server error
  */
-router.get('/', customerSupportController.getSupportRequests);
+// router.get('/', customerSupportController.getSupport);
 
 /**
  * @swagger
@@ -94,7 +94,7 @@ router.get('/', customerSupportController.getSupportRequests);
  *       500:
  *         description: Server error
  */
-router.get('/:id', customerSupportController.getSupportRequest);
+router.get('/:id', customerSupportController.getSupport);
 
 /**
  * @swagger
@@ -123,7 +123,7 @@ router.get('/:id', customerSupportController.getSupportRequest);
  *       500:
  *         description: Server error
  */
-router.put('/:id', customerSupportController.updateSupportRequest);
+router.put('/:id', customerSupportController.updateSupport);
 
 /**
  * @swagger
@@ -146,6 +146,6 @@ router.put('/:id', customerSupportController.updateSupportRequest);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', customerSupportController.deleteSupportRequest);
+router.delete('/:id', customerSupportController.deleteSupport);
 
 module.exports = router;

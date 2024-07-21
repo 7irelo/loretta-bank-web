@@ -42,6 +42,26 @@ const getCardHandler = async (req, res) => {
   }
 };
 
+const getCardsHandler = async (req, res) => {
+
+  try {
+    const query = `
+      SELECT * FROM cards
+    `;
+    const { rows } = await pool.query(query);
+    const cards = rows[0];
+
+    if (!cards) {
+      return res.status(404).json({ success: false, message: "Cards not found" });
+    }
+
+    res.status(200).json({ success: true, cards });
+  } catch (error) {
+    console.error(`Error fetching card with ID ${id}:`, error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
 const updateCardHandler = async (req, res) => {
   const { id } = req.params;
   const { cardNumber, expiryDate, cvv, cardType } = req.body;
@@ -94,6 +114,7 @@ const deleteCardHandler = async (req, res) => {
 module.exports = {
   createCardHandler,
   getCardHandler,
+  getCardsHandler,
   updateCardHandler,
   deleteCardHandler,
 };
