@@ -1,22 +1,35 @@
+const AccountDTO = require('../dtos/AccountDto');
+const UserDTO = require('../dtos/UserDto');
+const AccountSerializer = require('../serializers/AccountSerializer');
+const { logResponse } = require('../middleware/logger');
 const { pool } = require('../config/database');
 
-// Create Account
 const createAccount = async (req, res) => {
   try {
+    const { accountType } = req.body;
     const query = `
       INSERT INTO accounts (user_id, account_type)
       VALUES ($1, $2)
       RETURNING *;
     `;
-    const values = [req.user.id, req.body.account_type];
+    const values = [req.user.id, accountType];
 
     const { rows } = await pool.query(query, values);
     const account = rows[0];
 
+    const userQuery = 'SELECT * FROM users WHERE id = $1';
+    const { rows: userRows } = await pool.query(userQuery, [req.user.id]);
+    const user = userRows[0];
+
+    const accountDTO = new AccountDTO({
+      ...account,
+      user,
+    });
+
     const response = {
       success: true,
       message: "Account created successfully",
-      account,
+      account: AccountSerializer.serialize(accountDTO),
     };
 
     logResponse(201, "Account created successfully", response); // Log response
@@ -29,7 +42,6 @@ const createAccount = async (req, res) => {
   }
 };
 
-// Fetch all accounts for the logged-in user
 const getAccounts = async (req, res) => {
   try {
     const query = `
@@ -50,7 +62,7 @@ const getAccounts = async (req, res) => {
       const loansQuery = 'SELECT * FROM loans WHERE account_id = $1';
       const { rows: loans } = await pool.query(loansQuery, [accountRow.id]);
 
-      return {
+      const accountDTO = new AccountDTO({
         id: accountRow.id,
         name: accountRow.name,
         user_id: accountRow.user_id,
@@ -62,6 +74,9 @@ const getAccounts = async (req, res) => {
         created_at: accountRow.created_at,
         updated_at: accountRow.updated_at,
         account_number: accountRow.account_number,
+        transactions,
+        cards,
+        loans,
         user: {
           id: accountRow.user_id,
           first_name: accountRow.first_name,
@@ -71,12 +86,11 @@ const getAccounts = async (req, res) => {
           address: accountRow.address,
           occupation: accountRow.occupation,
           phone: accountRow.phone,
-          username: accountRow.username
+          username: accountRow.username,
         },
-        transactions,
-        cards,
-        loans
-      };
+      });
+
+      return AccountSerializer.serialize(accountDTO);
     }));
 
     const response = accounts;
@@ -91,7 +105,6 @@ const getAccounts = async (req, res) => {
   }
 };
 
-// Fetch a single account by ID
 const getAccount = async (req, res) => {
   const { id } = req.params;
   try {
@@ -119,7 +132,7 @@ const getAccount = async (req, res) => {
     const loansQuery = 'SELECT * FROM loans WHERE account_id = $1';
     const { rows: loans } = await pool.query(loansQuery, [id]);
 
-    const account = {
+    const accountDTO = new AccountDTO({
       id: accountRow.id,
       name: accountRow.name,
       user_id: accountRow.user_id,
@@ -131,6 +144,9 @@ const getAccount = async (req, res) => {
       created_at: accountRow.created_at,
       updated_at: accountRow.updated_at,
       account_number: accountRow.account_number,
+      transactions,
+      cards,
+      loans,
       user: {
         id: accountRow.user_id,
         first_name: accountRow.first_name,
@@ -140,14 +156,11 @@ const getAccount = async (req, res) => {
         address: accountRow.address,
         occupation: accountRow.occupation,
         phone: accountRow.phone,
-        username: accountRow.username
+        username: accountRow.username,
       },
-      transactions,
-      cards,
-      loans
-    };
+    });
 
-    const response = account;
+    const response = AccountSerializer.serialize(accountDTO);
 
     logResponse(200, "Account fetched successfully", response); // Log response
 
@@ -159,7 +172,6 @@ const getAccount = async (req, res) => {
   }
 };
 
-// Update account details
 const updateAccount = async (req, res) => {
   const { id } = req.params;
   const { accountType, balance, accountStatus } = req.body;
@@ -179,7 +191,16 @@ const updateAccount = async (req, res) => {
       return res.status(404).json(response);
     }
 
-    const response = { success: true, message: 'Account updated successfully', account };
+    const userQuery = 'SELECT * FROM users WHERE id = $1';
+    const { rows: userRows } = await pool.query(userQuery, [req.user.id]);
+    const user = userRows[0];
+
+    const accountDTO = new AccountDTO({
+      ...account,
+      user,
+    });
+
+    const response = { success: true, message: 'Account updated successfully', account: AccountSerializer.serialize(accountDTO) };
 
     logResponse(200, "Account updated successfully", response); // Log response
 
@@ -191,7 +212,6 @@ const updateAccount = async (req, res) => {
   }
 };
 
-// Full update account details (PUT)
 const putAccount = async (req, res) => {
   const { id } = req.params;
   const { accountType, balance, accountStatus } = req.body;
@@ -213,7 +233,16 @@ const putAccount = async (req, res) => {
       return res.status(404).json(response);
     }
 
-    const response = { success: true, message: 'Account updated successfully', account };
+    const userQuery = 'SELECT * FROM users WHERE id = $1';
+    const { rows: userRows } = await pool.query(userQuery, [req.user.id]);
+    const user = userRows[0];
+
+    const accountDTO = new AccountDTO({
+      ...account,
+      user,
+    });
+
+    const response = { success: true, message: 'Account updated successfully', account: AccountSerializer.serialize(accountDTO) };
 
     logResponse(200, "Account updated successfully", response); // Log response
 
@@ -225,8 +254,6 @@ const putAccount = async (req, res) => {
   }
 };
 
-
-// Partial update account details (PATCH)
 const patchAccount = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
@@ -265,7 +292,16 @@ const patchAccount = async (req, res) => {
       return res.status(404).json(response);
     }
 
-    const response = { success: true, message: 'Account updated successfully', account };
+    const userQuery = 'SELECT * FROM users WHERE id = $1';
+    const { rows: userRows } = await pool.query(userQuery, [req.user.id]);
+    const user = userRows[0];
+
+    const accountDTO = new AccountDTO({
+      ...account,
+      user,
+    });
+
+    const response = { success: true, message: 'Account updated successfully', account: AccountSerializer.serialize(accountDTO) };
 
     logResponse(200, "Account updated successfully", response); // Log response
 
@@ -277,8 +313,6 @@ const patchAccount = async (req, res) => {
   }
 };
 
-
-// Delete an account
 const deleteAccount = async (req, res) => {
   const { id } = req.params;
   try {

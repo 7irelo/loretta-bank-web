@@ -43,6 +43,7 @@ const registerUser = async (req, res) => {
 
 
 const loginUser = async (req, res) => {
+  console.log(req)
   try {
     const query = `SELECT * FROM users WHERE username = $1`;
     const { rows } = await pool.query(query, [req.body.username]);
@@ -50,6 +51,8 @@ const loginUser = async (req, res) => {
 
     if (!user) {
       const response = { success: false, message: "User not found" };
+      
+      console.log(response)
       logResponse(404, "User not found", response); // Log response
       return res.status(404).json(response);
     }
@@ -68,6 +71,7 @@ const loginUser = async (req, res) => {
 
     const response = { auth: true, token };
     logResponse(200, "User logged in successfully", response); // Log response
+    console.log(response)
 
     res.header("auth-token", token).status(200).json(response);
   } catch (error) {
