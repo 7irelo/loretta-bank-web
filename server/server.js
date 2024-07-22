@@ -8,7 +8,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { swaggerUi, specs } = require('./swagger');
 const { createDatabase } = require("./config/db.config");
-const logger = require("./middleware/logger");
+const { logRequest } = require("./middleware/logger"); // Import logRequest
 const errorHandler = require("./middleware/errorHandler");
 const authRoutes = require("./route/authRoutes");
 const accountRoutes = require("./route/accountRoutes");
@@ -40,7 +40,7 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(compression());
-app.use(logger);
+app.use(logRequest); // Use logRequest for logging requests and responses
 
 // Routes
 app.use('/api/auth', authRoutes);

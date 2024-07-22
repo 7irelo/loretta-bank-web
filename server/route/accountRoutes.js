@@ -137,6 +137,48 @@ router.put('/:id', accountController.updateAccount);
 /**
  * @swagger
  * /api/accounts/{id}:
+ *   patch:
+ *     summary: Partially update an account by ID
+ *     tags: [Account]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The account ID
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               account_type:
+ *                 type: string
+ *                 description: Updated account type
+ *               available_balance:
+ *                 type: number
+ *                 format: double
+ *                 description: Updated available balance
+ *               account_status:
+ *                 type: string
+ *                 description: Updated account status
+ *     responses:
+ *       200:
+ *         description: Account updated successfully
+ *       400:
+ *         description: No fields to update
+ *       404:
+ *         description: Account not found
+ *       500:
+ *         description: Server error
+ */
+router.patch('/:id', accountController.patchAccount);
+
+/**
+ * @swagger
+ * /api/accounts/{id}:
  *   delete:
  *     summary: Delete an account by ID
  *     tags: [Account]

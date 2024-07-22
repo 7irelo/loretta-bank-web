@@ -14,9 +14,39 @@ const logger = winston.createLogger({
   ],
 });
 
-const logMiddleware = (req, res, next) => {
-  logger.info(`${req.method} ${req.url}`);
+const logRequest = (req, res, next) => {
+  res.on('finish', () => {
+    const { statusCode } = res;
+    logger.info({
+      method: req.method,
+      url: req.url,
+      status: statusCode,
+      responseTime: `${Date.now() - req.startTime}ms`
+    });
+  });
+  
+  req.startTime = Date.now();
+  logger.info({
+    method: req.method,
+    url: req.url,
+    body: req.body
+  });
+
   next();
 };
 
-module.exports = logMiddleware;
+const logResponse = (status, message, data) => {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    status,
+    message,
+    data: data ? JSON.stringify(data) : null
+  };
+
+  logger.info('Response', logEntry);
+};
+
+module.exports = {
+  logRequest,
+  logResponse,
+};

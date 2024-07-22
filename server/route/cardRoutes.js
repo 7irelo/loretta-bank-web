@@ -75,7 +75,7 @@ router.use(verifyToken);
  *       500:
  *         description: Server error
  */
-router.post('/', cardController.createCardHandler);
+router.post('/', cardController.createCard);
 
 /**
  * @swagger
@@ -89,7 +89,7 @@ router.post('/', cardController.createCardHandler);
  *       500:
  *         description: Server error
  */
-router.get('/', cardController.getCardsHandler);
+// router.get('/', cardController.getCards);
 
 /**
  * @swagger
@@ -112,7 +112,7 @@ router.get('/', cardController.getCardsHandler);
  *       500:
  *         description: Server error
  */
-router.get('/:id', cardController.getCardHandler);
+router.get('/:id', cardController.getCard);
 
 /**
  * @swagger
@@ -135,6 +135,6 @@ router.get('/:id', cardController.getCardHandler);
  *       500:
  *         description: Server error
  */
-router.delete('/:id', cardController.deleteCardHandler);
+router.delete('/:id', cardController.deleteCard);
 
 module.exports = router;

@@ -26,27 +26,28 @@ CREATE TABLE IF NOT EXISTS users (
     );
 
 CREATE TABLE IF NOT EXISTS accounts (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR NOT NULL,
-      user_id VARCHAR REFERENCES users(id) NOT NULL,
-      account_type VARCHAR NOT NULL CHECK (account_type IN ('Savings', 'Cheque', 'Credit')),
-      available_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-      latest_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-      account_status VARCHAR NOT NULL DEFAULT 'Active' CHECK (account_status IN ('Active', 'Inactive', 'Closed')),
-      image_url VARCHAR(50) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    id SERIAL PRIMARY KEY,
+    account_number VARCHAR(13) NOT NULL,
+    name VARCHAR NOT NULL,
+    user_id VARCHAR REFERENCES users(id) NOT NULL,
+    account_type VARCHAR NOT NULL CHECK (account_type IN ('Savings', 'Cheque', 'Credit')),
+    available_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    latest_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    account_status VARCHAR NOT NULL DEFAULT 'Active' CHECK (account_status IN ('Active', 'Inactive', 'Closed')),
+    image_url VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS transactions (
-      id SERIAL PRIMARY KEY,
-      account_id INTEGER REFERENCES accounts(id),
-      type VARCHAR NOT NULL,
-      amount DOUBLE PRECISION NOT NULL,
-      date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      description VARCHAR,
-      journal_type VARCHAR
-    );
+    id SERIAL PRIMARY KEY,
+    account_id INTEGER REFERENCES accounts(id),
+    type VARCHAR NOT NULL,
+    amount DOUBLE PRECISION NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    description VARCHAR,
+    journal_type VARCHAR
+);
 
 CREATE TABLE IF NOT EXISTS loans (
       id SERIAL PRIMARY KEY,
@@ -63,17 +64,17 @@ CREATE TABLE IF NOT EXISTS loans (
     );
 
 CREATE TABLE IF NOT EXISTS cards (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR REFERENCES users(id) NOT NULL,
-      account_id INTEGER REFERENCES accounts(id) NOT NULL,
-      card_number VARCHAR(16) NOT NULL,
-      expiry_date DATE NOT NULL,
-      cvv VARCHAR(3) NOT NULL,
-      credit_limit DOUBLE PRECISION NOT NULL,
-      balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR REFERENCES users(id) NOT NULL,
+    account_id INTEGER REFERENCES accounts(id) NOT NULL,
+    card_number VARCHAR(16) NOT NULL,
+    expiry_date DATE NOT NULL,
+    cvv VARCHAR(3) NOT NULL,
+    credit_limit DOUBLE PRECISION NOT NULL,
+    balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS customer_support (
       id SERIAL PRIMARY KEY,

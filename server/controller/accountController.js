@@ -13,13 +13,18 @@ const createAccount = async (req, res) => {
     const { rows } = await pool.query(query, values);
     const account = rows[0];
 
-    res.status(201).json({
+    const response = {
       success: true,
       message: "Account created successfully",
       account,
-    });
+    };
+
+    logResponse(201, "Account created successfully", response); // Log response
+
+    res.status(201).json(response);
   } catch (error) {
     console.error("Error creating account:", error);
+    logResponse(500, "Server error", error); // Log error response
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
@@ -74,9 +79,14 @@ const getAccounts = async (req, res) => {
       };
     }));
 
-    res.status(200).json(accounts);
+    const response = accounts;
+
+    logResponse(200, "Accounts fetched successfully", response); // Log response
+
+    res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching accounts:', error);
+    logResponse(500, "Server error", error); // Log error response
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -95,7 +105,9 @@ const getAccount = async (req, res) => {
     const accountRow = rows[0];
 
     if (!accountRow) {
-      return res.status(404).json({ success: false, message: 'Account not found' });
+      const response = { success: false, message: 'Account not found' };
+      logResponse(404, "Account not found", response); // Log response
+      return res.status(404).json(response);
     }
 
     const transactionsQuery = 'SELECT * FROM transactions WHERE account_id = $1';
@@ -135,9 +147,14 @@ const getAccount = async (req, res) => {
       loans
     };
 
-    res.status(200).json(account);
+    const response = account;
+
+    logResponse(200, "Account fetched successfully", response); // Log response
+
+    res.status(200).json(response);
   } catch (error) {
     console.error(`Error fetching account with ID ${id}:`, error);
+    logResponse(500, "Server error", error); // Log error response
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -148,7 +165,7 @@ const updateAccount = async (req, res) => {
   const { accountType, balance, accountStatus } = req.body;
   try {
     const query = `
-      UPDATE accounts SET accountType = $1, balance = $2, accountStatus = $3, updatedAt = CURRENT_TIMESTAMP
+      UPDATE accounts SET account_type = $1, available_balance = $2, account_status = $3, updated_at = CURRENT_TIMESTAMP
       WHERE id = $4 AND user_id = $5
       RETURNING *;
     `;
@@ -157,15 +174,109 @@ const updateAccount = async (req, res) => {
     const account = rows[0];
 
     if (!account) {
-      return res.status(404).json({ success: false, message: 'Account not found' });
+      const response = { success: false, message: 'Account not found' };
+      logResponse(404, "Account not found", response); // Log response
+      return res.status(404).json(response);
     }
 
-    res.status(200).json({ success: true, message: 'Account updated successfully', account });
+    const response = { success: true, message: 'Account updated successfully', account };
+
+    logResponse(200, "Account updated successfully", response); // Log response
+
+    res.status(200).json(response);
   } catch (error) {
     console.error(`Error updating account with ID ${id}:`, error);
+    logResponse(500, "Server error", error); // Log error response
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
+
+// Full update account details (PUT)
+const putAccount = async (req, res) => {
+  const { id } = req.params;
+  const { accountType, balance, accountStatus } = req.body;
+
+  try {
+    const query = `
+      UPDATE accounts 
+      SET account_type = $1, available_balance = $2, account_status = $3, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $4 AND user_id = $5
+      RETURNING *;
+    `;
+    const values = [accountType, balance, accountStatus, id, req.user.id];
+    const { rows } = await pool.query(query, values);
+    const account = rows[0];
+
+    if (!account) {
+      const response = { success: false, message: 'Account not found' };
+      logResponse(404, "Account not found", response); // Log response
+      return res.status(404).json(response);
+    }
+
+    const response = { success: true, message: 'Account updated successfully', account };
+
+    logResponse(200, "Account updated successfully", response); // Log response
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(`Error updating account with ID ${id}:`, error);
+    logResponse(500, "Server error", error); // Log error response
+    res.status(500).json({ success: false, message: 'Server error', error });
+  }
+};
+
+
+// Partial update account details (PATCH)
+const patchAccount = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const queryParts = [];
+    const values = [];
+    let index = 1;
+
+    for (const [key, value] of Object.entries(updates)) {
+      queryParts.push(`${key} = $${index++}`);
+      values.push(value);
+    }
+
+    if (queryParts.length === 0) {
+      const response = { success: false, message: 'No fields to update' };
+      logResponse(400, "No fields to update", response); // Log response
+      return res.status(400).json(response);
+    }
+
+    values.push(id, req.user.id);
+
+    const query = `
+      UPDATE accounts
+      SET ${queryParts.join(', ')}, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $${index++} AND user_id = $${index}
+      RETURNING *;
+    `;
+
+    const { rows } = await pool.query(query, values);
+    const account = rows[0];
+
+    if (!account) {
+      const response = { success: false, message: 'Account not found' };
+      logResponse(404, "Account not found", response); // Log response
+      return res.status(404).json(response);
+    }
+
+    const response = { success: true, message: 'Account updated successfully', account };
+
+    logResponse(200, "Account updated successfully", response); // Log response
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(`Error updating account with ID ${id}:`, error);
+    logResponse(500, "Server error", error); // Log error response
+    res.status(500).json({ success: false, message: 'Server error', error });
+  }
+};
+
 
 // Delete an account
 const deleteAccount = async (req, res) => {
@@ -176,12 +287,19 @@ const deleteAccount = async (req, res) => {
     const account = rows[0];
 
     if (!account) {
-      return res.status(404).json({ success: false, message: 'Account not found' });
+      const response = { success: false, message: 'Account not found' };
+      logResponse(404, "Account not found", response); // Log response
+      return res.status(404).json(response);
     }
 
-    res.status(200).json({ success: true, message: 'Account deleted successfully' });
+    const response = { success: true, message: 'Account deleted successfully' };
+
+    logResponse(200, "Account deleted successfully", response); // Log response
+
+    res.status(200).json(response);
   } catch (error) {
     console.error(`Error deleting account with ID ${id}:`, error);
+    logResponse(500, "Server error", error); // Log error response
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -191,5 +309,7 @@ module.exports = {
   getAccounts,
   getAccount,
   updateAccount,
+  patchAccount,
+  putAccount,
   deleteAccount,
 };
