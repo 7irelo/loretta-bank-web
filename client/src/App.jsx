@@ -6,6 +6,7 @@ import Footer from "./Footer/Footer.jsx";
 import User from './User/User.jsx';
 import Login from './Login/Login.jsx';
 import Register from './Register/Register.jsx';
+import Borrow from './Borrow/Borrow.jsx';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -47,7 +48,6 @@ function App() {
         }
 
         const accountsData = await accountsResponse.json();
-        console.log(accountsData)
         setAccounts(accountsData);
       } catch (error) {
         setError(error.message);
@@ -97,17 +97,41 @@ function App() {
                 <Footer />
               </div>
             ) : (
-              <Navigate to="/login" />
+              <>
+                <Navigate to="/login" />
+                <Footer />
+              </>
             )}
           />
+          <Route path="/borrow" element={<Borrow />} />
           <Route path="/user" element={<User />} />
           <Route
             path="/login"
-            element={!user ? <Login /> : <Navigate to="/" />}
+            element={!user ? (
+              <>
+                <Login />
+                <Footer />
+              </>
+            ) : (
+              <>
+                <Navigate to="/" />
+                <Footer />
+              </>
+            )}
           />
           <Route
             path="/register"
-            element={!user ? <Register /> : <Navigate to="/" />}
+            element={!user ? (
+              <>
+                <Register />
+                <Footer />
+              </>
+            ) : (
+              <>
+                <Navigate to="/" />
+                <Footer />
+              </>
+            )}
           />
         </Routes>
       </div>

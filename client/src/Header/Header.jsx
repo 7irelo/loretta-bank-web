@@ -12,20 +12,22 @@ function Header(props) {
     const navigate = useNavigate();
 
     const handleSignOut = () => {
-        localStorage.removeItem('auth-token');
+        localStorage.removeItem('jwtToken');
         navigate('/login');
     };
 
     const navigation = [
-        { id: "home", name: "Home" },
-        { id: "transact", name: "Transact" },
-        { id: "schedule", name: "Buy" },
-        { id: "location", name: "Apply" },
-        { id: "about", name: "Borrow" },
+        { id: "home", name: "Home", path: "/" },
+        { id: "transact", name: "Transact", path: "#" },
+        { id: "schedule", name: "Buy", path: "#" },
+        { id: "location", name: "Apply", path: "#" },
+        { id: "about", name: "Borrow", path: "/borrow" },
     ];
 
     const navItems = navigation.map(navItem => (
-        <li key={navItem.id} className={navItem.id}><a href={`#${navItem.id}`}>{navItem.name}</a></li>
+        <li key={navItem.id} className={navItem.id}>
+            <Link to={navItem.path}>{navItem.name}</Link>
+        </li>
     ));
 
     const toggleDropdown = (event) => {
@@ -51,7 +53,7 @@ function Header(props) {
         <header>
             <div className={styles.head}>
                 <div className={styles.logo}>
-                    <a href="/"><img src={logo} alt="Loretta Bank Logo" /><h1>Loretta Bank</h1></a>
+                    <Link to="/"><img src={logo} alt="Loretta Bank Logo" /><h1>Loretta Bank</h1></Link>
                 </div>
                 <div className={styles.auth}>
                     <img src={dp} alt="User Profile" />

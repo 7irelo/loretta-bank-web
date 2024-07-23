@@ -8,7 +8,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { swaggerUi, specs } = require('./swagger');
 const { createDatabase } = require("./config/db.config");
-const { logRequest } = require("./middleware/logger"); // Import logRequest
+const { logRequest } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const authRoutes = require("./route/authRoutes");
 const accountRoutes = require("./route/accountRoutes");
@@ -22,8 +22,8 @@ dotenv.config();
 const app = express();
 
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { success: false, message: "Too many requests, please try again later." }
 });
 
@@ -40,7 +40,7 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(compression());
-app.use(logRequest); // Use logRequest for logging requests and responses
+app.use(logRequest);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -51,7 +51,7 @@ app.use('/api/loans', loanRoutes);
 app.use('/api/support', customerSupportRoutes);
 
 app.get("/test", async (req, res) => {
-  res.send({ message: "hello" });
+  res.send({ message: "Hello, World" });
 });
 
 // Error Handling Middleware
