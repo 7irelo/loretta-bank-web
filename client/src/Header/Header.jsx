@@ -67,19 +67,21 @@ function Header(props) {
             </div>
             <nav>
                 <ul>{navItems}</ul>
-                <button className={styles.quickLinks} onClick={toggleDropdown}>QuickLinks</button>
-                <div
-                    className={`${styles.quickLinksDropDown} ${isDropdownOpen ? styles.show : ''}`}
-                    ref={dropdownRef}
-                >
-                    <ul>
-                        <li><a href="#">Offshore banking</a></li>
-                        <li><a href="#">Online Share Trading</a></li>
-                        <li><a href="#">Motor and household insurance</a></li>
-                        <li><a href="#">AutoShare/Tax Free Invest</a></li>
-                        <li><a href="#">BizFlex Accounts</a></li>
-                    </ul>
-                </div>
+                <button className={`${styles.quickLinks} quickLinks`} onClick={toggleDropdown}>QuickLinks</button>
+                {isDropdownOpen && (
+                    <div
+                        className={styles.quickLinksDropDown}
+                        ref={dropdownRef}
+                    >
+                        <ul>
+                            <li><a href="#">Offshore banking</a></li>
+                            <li><a href="#">Online Share Trading</a></li>
+                            <li><a href="#">Motor and household insurance</a></li>
+                            <li><a href="#">AutoShare/Tax Free Invest</a></li>
+                            <li><a href="#">BizFlex Accounts</a></li>
+                        </ul>
+                    </div>
+                )}
             </nav>
         </header>
     );

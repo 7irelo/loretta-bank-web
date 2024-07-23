@@ -1,53 +1,56 @@
-import { useEffect, useState } from 'react';
+import { Link, Route, Routes, Navigate } from 'react-router-dom';
+import MyDashboards from './MyDashboards';
+import LinkSecureProfile from './LinkSecureProfile';
+import ManageDetails from './ManageDetails';
+import OverdraftLimit from './OverdraftLimit';
+import ManageConsents from './ManageConsents';
+import ManageThirdPartyAccess from './ManageThirdPartyAccess';
+import StatementDeliveryAddress from './StatementDeliveryAddress';
+import ManageDevices from './ManageDevices';
+import ViewPersonalDetails from './ViewPersonalDetails';
+import ManageOtpPreference from './ManageOtpPreference';
 import styles from './User.module.css';
 
 function User() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserDetails();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const menuItems = [
+    { name: 'My Dashboards', path: '/user/dashboards' },
+    { name: 'Link & Secure Your Profile', path: '/user/link-secure' },
+    { name: 'Manage Your Details', path: '/user/manage-details' },
+    { name: 'Overdraft Limit', path: '/user/overdraft-limit' },
+    { name: 'Manage Your Consents', path: '/user/manage-consents' },
+    { name: 'Manage Third-Party Access', path: '/user/manage-third-party' },
+    { name: 'Statement Delivery Address', path: '/user/statement-delivery' },
+    { name: 'Manage Devices', path: '/user/manage-devices' },
+    { name: 'View Personal Details', path: '/user/view-personal-details' },
+    { name: 'Manage OTP Preference', path: '/user/manage-otp' },
+  ];
 
   return (
-    <div className={styles.userProfile}>
-      <img src="/path/to/default-profile-pic.png" alt="User Profile" className={styles.profilePic} />
-      <h1>{user.first_name} {user.last_name}</h1>
-      <p>Username: {user.username}</p>
-      <p>Email: {user.email}</p>
-      <p>Occupation: {user.occupation}</p>
-      <p>Phone: {user.phone}</p>
-      <p>Address: {user.address}</p>
+    <div className={styles.userContainer}>
+      <nav className={styles.sidebar}>
+        <ul>
+          {menuItems.map((item, index) => (
+            <li key={index}>
+              <Link to={item.path}>{item.name}</Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <div className={styles.content}>
+        <Routes>
+          <Route path="/dashboards" element={<MyDashboards />} />
+          <Route path="/link-secure" element={<LinkSecureProfile />} />
+          <Route path="/manage-details" element={<ManageDetails />} />
+          <Route path="/overdraft-limit" element={<OverdraftLimit />} />
+          <Route path="/manage-consents" element={<ManageConsents />} />
+          <Route path="/manage-third-party" element={<ManageThirdPartyAccess />} />
+          <Route path="/statement-delivery" element={<StatementDeliveryAddress />} />
+          <Route path="/manage-devices" element={<ManageDevices />} />
+          <Route path="/view-personal-details" element={<ViewPersonalDetails />} />
+          <Route path="/manage-otp" element={<ManageOtpPreference />} />
+          <Route path="*" element={<Navigate to="/user/dashboards" />} />
+        </Routes>
+      </div>
     </div>
   );
 }

@@ -89,13 +89,13 @@ const getAccounts = async (req, res) => {
           username: accountRow.username,
         },
       });
-
-      return AccountSerializer.serialize(accountDTO);
+      console.log(accountDTO)
+      return accountDTO;
     }));
 
     const response = accounts;
 
-    logResponse(200, "Accounts fetched successfully", response); // Log response
+    // logResponse(200, "Accounts fetched successfully", response); // Log response
 
     res.status(200).json(response);
   } catch (error) {
@@ -160,9 +160,9 @@ const getAccount = async (req, res) => {
       },
     });
 
-    const response = AccountSerializer.serialize(accountDTO);
+    const response = accountDTO;
 
-    logResponse(200, "Account fetched successfully", response); // Log response
+    // logResponse(200, "Account fetched successfully", response); // Log response
 
     res.status(200).json(response);
   } catch (error) {

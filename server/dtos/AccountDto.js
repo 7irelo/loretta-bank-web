@@ -17,7 +17,7 @@ class AccountDTO {
     transactions,
     cards,
     loans,
-    user, // Include user as a property
+    user,
   }) {
     this.id = id;
     this.name = name;
@@ -33,7 +33,7 @@ class AccountDTO {
     this.transactions = transactions;
     this.cards = cards;
     this.loans = loans;
-    this.user = new UserDTO(user); // Initialize user as a UserDTO
+    this.user = new UserDTO(user);
   }
 }
 

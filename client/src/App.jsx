@@ -104,7 +104,7 @@ function App() {
             )}
           />
           <Route path="/borrow" element={<Borrow />} />
-          <Route path="/user" element={<User />} />
+          <Route path="/user/*" element={<User />} />
           <Route
             path="/login"
             element={!user ? (
