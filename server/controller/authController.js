@@ -53,7 +53,7 @@ const loginUser = async (req, res) => {
       const response = { success: false, message: "User not found" };
       
       console.log(response)
-      logResponse(404, "User not found", response); // Log response
+      logResponse(404, "User not found", response);
       return res.status(404).json(response);
     }
 
@@ -61,7 +61,7 @@ const loginUser = async (req, res) => {
 
     if (!passwordIsValid) {
       const response = { success: false, message: "Invalid password" };
-      logResponse(401, "Invalid password", response); // Log response
+      logResponse(401, "Invalid password", response);
       return res.status(401).json(response);
     }
 
@@ -70,13 +70,13 @@ const loginUser = async (req, res) => {
     });
 
     const response = { auth: true, token };
-    logResponse(200, "User logged in successfully", response); // Log response
+    logResponse(200, "User logged in successfully", response);
     console.log(response)
 
     res.header("auth-token", token).status(200).json(response);
   } catch (error) {
     console.error("Error logging in user:", error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
@@ -89,17 +89,17 @@ const getCurrentUser = async (req, res) => {
 
     if (!user) {
       const response = { success: false, message: "User not found" };
-      logResponse(404, "User not found", response); // Log response
+      logResponse(404, "User not found", response);
       return res.status(404).json(response);
     }
 
     const response = UserSerializer.serialize(user);
-    logResponse(200, "Current user fetched successfully", response); // Log response
+    logResponse(200, "Current user fetched successfully", response);
 
     res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching current user:", error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };

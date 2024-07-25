@@ -5,17 +5,17 @@ function Account({ account }) {
   if (!account) {
     return <div>Account data is not available</div>;
   }
-
-  const accountNumber = account.account_number ? account.account_number.replaceAll(' ', '-') : 'N/A';
-  const userName = account.user ? `${account.user.last_name.toUpperCase()} ${account.user.first_name.charAt(0)}` : 'N/A';
+  console.log(account)
+  const accountNumber = account.accountNumber ? account.accountNumber.replaceAll(' ', '-') : 'N/A';
+  const userName = account.user ? `${account.user.lastName.toUpperCase()} ${account.user.firstName.charAt(0)}` : 'N/A';
 
   return (
     <div className={styles.card} id="card">
       <div className={styles.accountDetails}>
-        <img src={account.image_url} alt="account picture" className={styles.cardImage} />
+        <img src={`./src/assets/${account.accountType.toLowerCase()}.png`} alt="account picture" className={styles.cardImage} />
         <div className={styles.cardDescription}>
           <p>{account.name}</p>
-          <p><small>Current Account {accountNumber}</small></p>
+          <p><small>Current Account {`${accountNumber.slice(0, 2)}-${accountNumber.slice(2, 4)}-${accountNumber.slice(4, 7)}-${accountNumber.slice(7, 11)}`}</small></p>
           <small>Name: {userName}</small>
         </div>
       </div>
@@ -23,11 +23,11 @@ function Account({ account }) {
       <div className={styles.accountBalance}>
         <div>
           <p>Available balance</p>
-          <p>R{account.available_balance}</p>
+          <p>R{account.availableBalance}</p>
         </div>
         <div>
           <p>Latest balance</p>
-          <p>R{account.latest_balance}</p>
+          <p>R{account.latestBalance}</p>
         </div>
       </div>
       <hr />

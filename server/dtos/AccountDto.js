@@ -1,4 +1,3 @@
-// dtos/AccountDTO.js
 const UserDTO = require('./UserDto');
 
 class AccountDTO {

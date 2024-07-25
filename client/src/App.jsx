@@ -16,6 +16,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // localStorage.removeItem('jwtToken')
       try {
         const token = localStorage.getItem('jwtToken');
         if (!token) {
@@ -60,11 +61,11 @@ function App() {
   }, []);
 
   const groupedAccounts = accounts.reduce((acc, account) => {
-    const { account_type } = account;
-    if (!acc[account_type]) {
-      acc[account_type] = [];
+    const { accountType } = account;
+    if (!acc[accountType]) {
+      acc[accountType] = [];
     }
-    acc[account_type].push(account);
+    acc[accountType].push(account);
     return acc;
   }, {});
 

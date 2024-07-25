@@ -56,11 +56,12 @@ function Header(props) {
                     <Link to="/"><img src={logo} alt="Loretta Bank Logo" /><h1>Loretta Bank</h1></Link>
                 </div>
                 <div className={styles.auth}>
-                    <img src={dp} alt="User Profile" />
-                    <li><Link to="/user">{props.user.first_name}</Link></li>
                     <div className={styles.signOutContainer}>
-                        <button onClick={handleSignOut} className={styles.signOutButton}>Sign out</button>
-                        <img src={lockIcon} alt="Lock Icon" className={styles.lockIcon} />
+                        <img src={dp} alt="User Profile" />
+                        <li><Link to="/user">{props.user.firstName}</Link></li>
+                        <a onClick={handleSignOut} className={styles.signOutButton}>
+                            <li>Sign out</li><img src={lockIcon} alt="Lock Icon" className={styles.lockIcon} />
+                        </a>
                     </div>
                 </div>
                 <div className={styles.hamburger}><h1>≡</h1></div>

@@ -89,18 +89,16 @@ const getAccounts = async (req, res) => {
           username: accountRow.username,
         },
       });
-      console.log(accountDTO)
+
       return accountDTO;
     }));
 
     const response = accounts;
 
-    // logResponse(200, "Accounts fetched successfully", response); // Log response
-
     res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching accounts:', error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -119,7 +117,7 @@ const getAccount = async (req, res) => {
 
     if (!accountRow) {
       const response = { success: false, message: 'Account not found' };
-      logResponse(404, "Account not found", response); // Log response
+      logResponse(404, "Account not found", response);
       return res.status(404).json(response);
     }
 
@@ -162,12 +160,10 @@ const getAccount = async (req, res) => {
 
     const response = accountDTO;
 
-    // logResponse(200, "Account fetched successfully", response); // Log response
-
     res.status(200).json(response);
   } catch (error) {
     console.error(`Error fetching account with ID ${id}:`, error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };

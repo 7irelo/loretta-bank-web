@@ -53,9 +53,8 @@ header a {
 
 .auth img {
     border-radius: 50%;
-    height: 40px;
-    width: 40px;
-    margin-right: 15px;
+    height: 30px;
+    width: 30px;
     transition: transform 0.3s ease;
 }
 
@@ -65,14 +64,21 @@ header a {
 
 .auth li {
     list-style-type: none;
-    margin: 0 15px;
+    margin: 0 10px;
+    /* border-radius: 20px;
+    padding: 10px 20px; */
 }
 
 .auth a {
-    color: #FFFFFF;
+    padding: 10px 20px;
+    color: black;
     text-decoration: none;
     font-weight: bold;
 }
+
+/* .auth li:hover {
+    background: #012A4A;
+} */
 
 .signOutContainer {
     display: flex;
@@ -80,9 +86,12 @@ header a {
 }
 
 .signOutButton {
+    padding: 10px 20px;
+    justify-content: center;
     background: none;
     border: none;
-    color: #FFFFFF;
+    color: black;
+    border-radius: 20px;
     text-decoration: none;
     font-weight: bold;
     cursor: pointer;
@@ -90,11 +99,18 @@ header a {
     align-items: center;
 }
 
+.signOutButton:hover {
+    background: #012A4A;
+}
+
+.signOutButton p {
+    margin-right: 5px;
+    size: 5px;
+}
+
 .lockIcon {
-    width: 16px;
-    height: 16px;
-    margin-right: 8px;
-    filter: grayscale(100%);
+    width: 50px;
+    height: 50px;
 }
 
 .hamburger {

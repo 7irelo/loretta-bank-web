@@ -23,7 +23,7 @@ function Login() {
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
-
+      
       localStorage.setItem('jwtToken', data.token);
       navigate('/');
     } catch (error) {
