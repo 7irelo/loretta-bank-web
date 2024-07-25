@@ -1,5 +1,7 @@
 # Loretta Bank
 
+![Screenshot (952)](https://github.com/user-attachments/assets/ea6542ee-a583-414c-963b-12ccd530fc50)
+
 Welcome to Loretta Bank, an online banking application built with Node.js, Express, PostgreSQL, and React. Loretta Bank offers a secure, user-friendly platform for managing your banking needs online.
 
 ## Table of Contents
@@ -12,6 +14,7 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
+- [Folder Structure](#folder-structure)
 
 ## Features
 
@@ -34,11 +37,10 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 
 ### Prerequisites
 
-- Node.js and npm installed
-- PostgreSQL installed and running
+- Docker and Docker Compose installed
 - Git installed
 
-### Backend Setup
+### Docker Setup
 
 1. Clone the repository:
 
@@ -47,68 +49,33 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
     cd loretta-bank-web
     ```
 
-2. Install dependencies:
+2. Build and start the containers:
 
     ```bash
-    cd server
-    npm install
+    docker-compose up --build
     ```
 
-3. Set up environment variables:
+### Environment Variables
 
-    Create a `.env` file in the `server` directory and add the following:
+Make sure to update your environment variables as needed. Here are the default ones used in the Docker setup:
+
+- Backend `.env`:
 
     ```env
-    PORT=3000
-    DATABASE_URL=postgres://username:password@localhost:5432/lorettabank
+    PORT=3001
+    DATABASE_URL=postgres://postgres:password@db:5432/loretta_bank
     JWT_SECRET=your_jwt_secret
     ```
 
-4. Initialize the database schema:
-
-    Create the database and apply migrations using `node-postgres` or `pg-promise`:
-
-    ```bash
-    npm run migrate
-    ```
-
-5. Start the backend server:
-
-    ```bash
-    npm start
-    ```
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-
-    ```bash
-    cd ../client
-    ```
-
-2. Install dependencies:
-
-    ```bash
-    npm install
-    ```
-
-3. Set up environment variables:
-
-    Create a `.env` file in the `client` directory and add the following:
+- Frontend `.env`:
 
     ```env
-    REACT_APP_API_URL=http://localhost:3000/api
-    ```
-
-4. Start the frontend server:
-
-    ```bash
-    npm start
+    REACT_APP_API_URL=http://localhost:5173
     ```
 
 ## Usage
 
-- Open your web browser and navigate to `http://localhost:3000`
+- Open your web browser and navigate to `http://localhost:5173`
 - Sign up for a new account or log in with your existing credentials
 - Manage your accounts, transfer funds, and view transaction history
 
@@ -188,6 +155,7 @@ loretta-bank-web/
 │   ├── public/
 │   ├── src/
 │   ├── .env
+│   ├── Dockerfile
 │   └── package.json
 ├── server/                    # Node.js backend
 │   ├── config/                # Database and app configuration
@@ -198,6 +166,8 @@ loretta-bank-web/
 │   ├── services/              # Business logic
 │   ├── utils/                 # Utility functions
 │   ├── .env
+│   ├── Dockerfile
 │   └── package.json
+├── docker-compose.yml         # Docker Compose configuration
 └── README.md
 ```
