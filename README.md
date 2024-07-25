@@ -1,7 +1,3 @@
-Here's the updated README with PostgreSQL instructions and improved code structure. I've also included a folder structure for better organization.
-
----
-
 # Loretta Bank
 
 Welcome to Loretta Bank, an online banking application built with Node.js, Express, PostgreSQL, and React. Loretta Bank offers a secure, user-friendly platform for managing your banking needs online.
