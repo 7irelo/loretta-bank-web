@@ -1,3 +1,7 @@
+Here's the updated README with PostgreSQL instructions and improved code structure. I've also included a folder structure for better organization.
+
+---
+
 # Loretta Bank
 
 Welcome to Loretta Bank, an online banking application built with Node.js, Express, PostgreSQL, and React. Loretta Bank offers a secure, user-friendly platform for managing your banking needs online.
@@ -50,25 +54,26 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 2. Install dependencies:
 
     ```bash
-    cd backend
+    cd server
     npm install
     ```
 
 3. Set up environment variables:
 
-    Create a `.env` file in the `backend` directory and add the following:
+    Create a `.env` file in the `server` directory and add the following:
 
     ```env
-    PORT=5000
-    DATABASE_URL=postgres://username:password@localhost:5432/loretta_bank
+    PORT=3000
+    DATABASE_URL=postgres://username:password@localhost:5432/lorettabank
     JWT_SECRET=your_jwt_secret
     ```
 
-4. Initialize the database:
+4. Initialize the database schema:
+
+    Create the database and apply migrations using `node-postgres` or `pg-promise`:
 
     ```bash
-    npx sequelize-cli db:create
-    npx sequelize-cli db:migrate
+    npm run migrate
     ```
 
 5. Start the backend server:
@@ -82,7 +87,7 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 1. Navigate to the frontend directory:
 
     ```bash
-    cd ../frontend
+    cd ../client
     ```
 
 2. Install dependencies:
@@ -93,10 +98,10 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 
 3. Set up environment variables:
 
-    Create a `.env` file in the `frontend` directory and add the following:
+    Create a `.env` file in the `client` directory and add the following:
 
     ```env
-    REACT_APP_API_URL=http://localhost:5000/api
+    REACT_APP_API_URL=http://localhost:3000/api
     ```
 
 4. Start the frontend server:
@@ -115,9 +120,11 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 
 ### Authentication
 
-- `POST /api/auth/signup` - Sign up a new user
+- `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Log in a user
-- `POST /api/auth/logout` - Log out a user
+- `GET /api/auth/me` - Fetch logged in user
+- `PUT /api/auth/logout` - Update logged in user
+- `PATCH /api/auth/logout` - Update logged in user
 
 ### Accounts
 
@@ -129,8 +136,35 @@ Welcome to Loretta Bank, an online banking application built with Node.js, Expre
 
 ### Transactions
 
+- `GET /api/transactions` - Get all transactions for the specific account
 - `POST /api/transactions` - Create a new transaction
-- `GET /api/transactions` - Get all transactions for the authenticated user
+- `GET /api/transactions/:id` - Get a specific transaction
+- `PUT /api/transactions/:id` - Update a specific transaction
+- `DELETE /api/transactions/:id` - Delete a specific transaction
+
+### Cards
+
+- `GET /api/cards` - Get all cards for the specific account
+- `POST /api/cards` - Create a new card
+- `GET /api/cards/:id` - Get a specific card
+- `PUT /api/cards/:id` - Update a specific card
+- `DELETE /api/cards/:id` - Delete a specific card
+
+### Loans
+
+- `GET /api/loans` - Get all loans for the specific account
+- `POST /api/loans` - Create a new loan
+- `GET /api/loans/:id` - Get a specific loan
+- `PUT /api/loans/:id` - Update a specific loan
+- `DELETE /api/loans/:id` - Delete a specific loan
+
+### Customer Support Ticket
+
+- `GET /api/support` - Get all support tickets for the specific user
+- `POST /api/support` - Create a new support ticket
+- `GET /api/support/:id` - Get a specific support ticket
+- `PUT /api/support/:id` - Update a specific support ticket
+- `DELETE /api/support/:id` - Delete a specific support ticket
 
 ## Contributing
 
@@ -148,4 +182,26 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any inquiries or issues, please contact us at [support@lorettabank.com](mailto:tirelo.eric@gmail.com).
+For any inquiries or issues, please contact us at [support@lorettabank.com](mailto:support@lorettabank.com).
+
+## Folder Structure
+
+```
+loretta-bank-web/
+├── client/                    # React frontend
+│   ├── public/
+│   ├── src/
+│   ├── .env
+│   └── package.json
+├── server/                    # Node.js backend
+│   ├── config/                # Database and app configuration
+│   ├── controllers/           # Route controllers
+│   ├── middlewares/           # Middleware functions
+│   ├── models/                # Database models
+│   ├── routes/                # API routes
+│   ├── services/              # Business logic
+│   ├── utils/                 # Utility functions
+│   ├── .env
+│   └── package.json
+└── README.md
+```
