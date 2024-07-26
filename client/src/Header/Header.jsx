@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import styles from "./Header.module.css";
 import logo from "../assets/logo.jpg";
 import dp from "../assets/dp2.png";
-import lockIcon from "../assets/lock.svg";
+import lockIcon from "../assets/lockIcon.svg";
 
 function Header(props) {
     const [dropdownVisible, setDropdownVisible] = useState({
@@ -68,11 +68,11 @@ function Header(props) {
                     <Link to="/"><img src={logo} alt="Loretta Bank Logo" /><h1>Loretta Bank</h1></Link>
                 </div>
                 <div className={styles.auth}>
-                    <img src={dp} alt="User Profile" />
+                    <img src={dp} alt="User Profile" className={styles.dp}/>
                     <li><Link to="/user">{props.user.firstName}</Link></li>
                     <div className={styles.signOutContainer}>
-                        <a onClick={handleSignOut} className={styles.signOutButton}>
-                            <li>Sign out</li><img src={lockIcon} alt="Lock Icon" className={styles.lockIcon} />
+                        <a  className={styles.signOutButton}>
+                        <li onClick={handleSignOut}><Link to="/login"><a>Sign Out</a></Link></li><img src={lockIcon} alt="Lock Icon" className={styles.lockIcon} />
                         </a>
                     </div>
                 </div>

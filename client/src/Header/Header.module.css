@@ -51,7 +51,7 @@ header a {
     align-items: center;
 }
 
-.auth img {
+.dp {
     border-radius: 50%;
     height: 30px;
     width: 30px;
@@ -66,7 +66,7 @@ header a {
     margin: 0;
     padding: 0;
     list-style-type: none;
-    margin-right: 10px;
+    margin-left: 10px;
 }
 
 .auth a {
@@ -79,29 +79,48 @@ header a {
 .signOutContainer {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: auto;
+    margin: 0;
+    padding: 0;
 }
 
 .signOutButton {
-    padding: 10px 20px;
+    padding: 0;
     justify-content: center;
     background: none;
     border: none;
-    color: black;
+    color: white;
     border-radius: 20px;
     text-decoration: none;
     font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
-}
-
-.signOutButton:hover {
+    gap: 0;
+    transition: background 0.3s ease, color 0.3s ease;
     background: #012A4A;
 }
 
+.signOutButton a {
+    color: white;
+}
+
 .lockIcon {
-    width: 50px;
-    height: 50px;
+    height: 20px;
+    width: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.signOutButton:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    color: black;
+}
+
+.signOutButton:hover li {
+    color: white;
 }
 
 .hamburger {
@@ -138,11 +157,12 @@ nav ul li a {
     text-decoration: none;
     font-weight: bold;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
 }
 
 nav ul li.transact a::after,
-nav ul li.schedule a::after,
-nav ul li.location a::after {
+nav ul li.buy a::after,
+nav ul li.apply a::after {
     content: " ▾";
     font-size: 1.2rem;
     margin-left: 5px;
@@ -157,7 +177,7 @@ nav ul li a:hover {
 
 .quickLinks {
     width: 150px;
-    height: 35px;
+    height: 20px;
     border: none;
     border-radius: 5px;
     color: black;
@@ -188,7 +208,7 @@ nav ul li a:hover {
 
 .quickLinksDropDown {
     position: absolute;
-    top: 140px;
+    top: 135px;
     right: 30px;
     background: linear-gradient(90deg, #012A4A, #034078);
     border-radius: 5px;
@@ -280,23 +300,4 @@ nav ul li a:hover {
     background-color: #F0F0F0;
     color: #012A4A;
     border-radius: 5px;
-}
-
-nav ul li a {
-    color: #FFFFFF;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-    cursor: pointer; /* Ensure pointer cursor for links */
-}
-
-nav ul li.transact a::after,
-nav ul li.buy a::after,
-nav ul li.apply a::after {
-    content: " ▾";
-    font-size: 1.2rem;
-    margin-left: 5px;
-    color: #FFFFFF;
 }
