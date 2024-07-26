@@ -1,6 +1,6 @@
 # Loretta Bank
 
-![Screenshot (952)](https://github.com/user-attachments/assets/ea6542ee-a583-414c-963b-12ccd530fc50)
+![Uploading lorettaHome.png…]()
 
 Welcome to Loretta Bank, an online banking application built with Node.js, Express, PostgreSQL, and React. Loretta Bank offers a secure, user-friendly platform for managing your banking needs online.
 
