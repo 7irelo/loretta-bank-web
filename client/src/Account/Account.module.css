@@ -2,10 +2,10 @@
     border-radius: 10px;
     box-shadow: 5px 5px 25px hsl(0, 0%, 0%);
     padding: 20px;
-    margin-top: 10px;
-    margin-top: 10px;
+    margin: 0;
+    margin-bottom: 20px;
     text-align: center;
-    width: 95%;
+    width: 80%;
     height: auto;
     display: inline-block;
     background-color:white;padding-bottom: 0;

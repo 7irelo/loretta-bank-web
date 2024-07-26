@@ -12,8 +12,6 @@ router.use(verifyToken);
  *     Account:
  *       type: object
  *       required:
- *         - name
- *         - user_id
  *         - account_type
  *         - available_balance
  *         - latest_balance
@@ -21,13 +19,13 @@ router.use(verifyToken);
  *       properties:
  *         id:
  *           type: integer
- *           description: The auto-generated account id
+ *           description: The auto-generated account ID
  *         name:
  *           type: string
  *           description: Account's name
  *         user_id:
  *           type: string
- *           description: Account holder's id
+ *           description: Account holder's ID
  *         account_type:
  *           type: string
  *           description: Account type (Cheque, Savings, Credit)
@@ -39,6 +37,20 @@ router.use(verifyToken);
  *           type: number
  *           format: double
  *           description: Account's latest balance
+ *         account_status:
+ *           type: string
+ *           description: Account status (Active, Inactive, Suspended)
+ *         image_url:
+ *           type: string
+ *           description: URL for the account's image
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           description: Account creation date
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *           description: Last account update date
  *       example:
  *         id: 1
  *         name: mymomoacc
@@ -46,6 +58,7 @@ router.use(verifyToken);
  *         account_type: Cheque
  *         available_balance: 7554.56
  *         latest_balance: 6508.88
+ *         account_status: Active
  */
 
 /**

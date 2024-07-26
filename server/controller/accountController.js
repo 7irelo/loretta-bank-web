@@ -1,5 +1,4 @@
 const AccountDTO = require('../dtos/AccountDto');
-const UserDTO = require('../dtos/UserDto');
 const AccountSerializer = require('../serializers/AccountSerializer');
 const { logResponse } = require('../middleware/logger');
 const { pool } = require('../config/database');
@@ -33,7 +32,6 @@ const createAccount = async (req, res) => {
     };
 
     logResponse(201, "Account created successfully", response); // Log response
-
     res.status(201).json(response);
   } catch (error) {
     console.error("Error creating account:", error);
@@ -93,9 +91,7 @@ const getAccounts = async (req, res) => {
       return accountDTO;
     }));
 
-    const response = accounts;
-
-    res.status(200).json(response);
+    res.status(200).json(accounts);
   } catch (error) {
     console.error('Error fetching accounts:', error);
     logResponse(500, "Server error", error);
@@ -158,9 +154,7 @@ const getAccount = async (req, res) => {
       },
     });
 
-    const response = accountDTO;
-
-    res.status(200).json(response);
+    res.status(200).json(accountDTO);
   } catch (error) {
     console.error(`Error fetching account with ID ${id}:`, error);
     logResponse(500, "Server error", error);
@@ -169,46 +163,6 @@ const getAccount = async (req, res) => {
 };
 
 const updateAccount = async (req, res) => {
-  const { id } = req.params;
-  const { accountType, balance, accountStatus } = req.body;
-  try {
-    const query = `
-      UPDATE accounts SET account_type = $1, available_balance = $2, account_status = $3, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $4 AND user_id = $5
-      RETURNING *;
-    `;
-    const values = [accountType, balance, accountStatus, id, req.user.id];
-    const { rows } = await pool.query(query, values);
-    const account = rows[0];
-
-    if (!account) {
-      const response = { success: false, message: 'Account not found' };
-      logResponse(404, "Account not found", response); // Log response
-      return res.status(404).json(response);
-    }
-
-    const userQuery = 'SELECT * FROM users WHERE id = $1';
-    const { rows: userRows } = await pool.query(userQuery, [req.user.id]);
-    const user = userRows[0];
-
-    const accountDTO = new AccountDTO({
-      ...account,
-      user,
-    });
-
-    const response = { success: true, message: 'Account updated successfully', account: AccountSerializer.serialize(accountDTO) };
-
-    logResponse(200, "Account updated successfully", response); // Log response
-
-    res.status(200).json(response);
-  } catch (error) {
-    console.error(`Error updating account with ID ${id}:`, error);
-    logResponse(500, "Server error", error); // Log error response
-    res.status(500).json({ success: false, message: 'Server error', error });
-  }
-};
-
-const putAccount = async (req, res) => {
   const { id } = req.params;
   const { accountType, balance, accountStatus } = req.body;
 
@@ -225,7 +179,7 @@ const putAccount = async (req, res) => {
 
     if (!account) {
       const response = { success: false, message: 'Account not found' };
-      logResponse(404, "Account not found", response); // Log response
+      logResponse(404, "Account not found", response);
       return res.status(404).json(response);
     }
 
@@ -240,12 +194,11 @@ const putAccount = async (req, res) => {
 
     const response = { success: true, message: 'Account updated successfully', account: AccountSerializer.serialize(accountDTO) };
 
-    logResponse(200, "Account updated successfully", response); // Log response
-
+    logResponse(200, "Account updated successfully", response);
     res.status(200).json(response);
   } catch (error) {
     console.error(`Error updating account with ID ${id}:`, error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -266,7 +219,7 @@ const patchAccount = async (req, res) => {
 
     if (queryParts.length === 0) {
       const response = { success: false, message: 'No fields to update' };
-      logResponse(400, "No fields to update", response); // Log response
+      logResponse(400, "No fields to update", response);
       return res.status(400).json(response);
     }
 
@@ -284,7 +237,7 @@ const patchAccount = async (req, res) => {
 
     if (!account) {
       const response = { success: false, message: 'Account not found' };
-      logResponse(404, "Account not found", response); // Log response
+      logResponse(404, "Account not found", response);
       return res.status(404).json(response);
     }
 
@@ -299,12 +252,11 @@ const patchAccount = async (req, res) => {
 
     const response = { success: true, message: 'Account updated successfully', account: AccountSerializer.serialize(accountDTO) };
 
-    logResponse(200, "Account updated successfully", response); // Log response
-
+    logResponse(200, "Account updated successfully", response);
     res.status(200).json(response);
   } catch (error) {
     console.error(`Error updating account with ID ${id}:`, error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -318,18 +270,16 @@ const deleteAccount = async (req, res) => {
 
     if (!account) {
       const response = { success: false, message: 'Account not found' };
-      logResponse(404, "Account not found", response); // Log response
+      logResponse(404, "Account not found", response);
       return res.status(404).json(response);
     }
 
     const response = { success: true, message: 'Account deleted successfully' };
-
-    logResponse(200, "Account deleted successfully", response); // Log response
-
+    logResponse(200, "Account deleted successfully", response);
     res.status(200).json(response);
   } catch (error) {
     console.error(`Error deleting account with ID ${id}:`, error);
-    logResponse(500, "Server error", error); // Log error response
+    logResponse(500, "Server error", error);
     res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
@@ -340,6 +290,5 @@ module.exports = {
   getAccount,
   updateAccount,
   patchAccount,
-  putAccount,
   deleteAccount,
 };

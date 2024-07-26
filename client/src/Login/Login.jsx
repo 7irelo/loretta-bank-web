@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './Login.module.css';
 
 function Login() {
@@ -58,6 +58,9 @@ function Login() {
         <button type="submit" className={styles.button}>Login</button>
         {error && <div className={styles.error}>Error: {error}</div>}
       </form>
+      <p className={styles.switch}>
+        Don't have an account? <Link to="/register" className={styles.link}>Register here</Link>
+      </p>
     </div>
   );
 }

@@ -7,6 +7,8 @@ import User from './User/User.jsx';
 import Login from './Login/Login.jsx';
 import Register from './Register/Register.jsx';
 import Borrow from './Borrow/Borrow.jsx';
+import Loading from './Loading';
+import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -16,7 +18,6 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // localStorage.removeItem('jwtToken')
       try {
         const token = localStorage.getItem('jwtToken');
         if (!token) {
@@ -70,7 +71,7 @@ function App() {
   }, {});
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {
@@ -79,62 +80,41 @@ function App() {
 
   return (
     <Router>
-      <div>
+      <div className="app">
         {user && <Header user={user} />}
-        <Routes>
-          <Route
-            path="/"
-            element={user ? (
-              <div className="home">
-                <h2>Accounts</h2>
-                {Object.keys(groupedAccounts).map((accountType) => (
-                  <div key={accountType}>
-                    <h3>{accountType}</h3>
-                    {groupedAccounts[accountType].map((account, index) => (
-                      <Account key={index} account={account} />
-                    ))}
-                  </div>
-                ))}
-                <Footer />
-              </div>
-            ) : (
-              <>
+        <div className="content">
+          <Routes>
+            <Route
+              path="/"
+              element={user ? (
+                <div className="home">
+                  <h2>Accounts</h2><hr/>
+                  {Object.keys(groupedAccounts).map((accountType) => (
+                    <div key={accountType}>
+                      <h3>{accountType}</h3>
+                      {groupedAccounts[accountType].map((account, index) => (
+                        <Account key={index} account={account} />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ) : (
                 <Navigate to="/login" />
-                <Footer />
-              </>
-            )}
-          />
-          <Route path="/borrow" element={<Borrow />} />
-          <Route path="/user/*" element={<User />} />
-          <Route
-            path="/login"
-            element={!user ? (
-              <>
-                <Login />
-                <Footer />
-              </>
-            ) : (
-              <>
-                <Navigate to="/" />
-                <Footer />
-              </>
-            )}
-          />
-          <Route
-            path="/register"
-            element={!user ? (
-              <>
-                <Register />
-                <Footer />
-              </>
-            ) : (
-              <>
-                <Navigate to="/" />
-                <Footer />
-              </>
-            )}
-          />
-        </Routes>
+              )}
+            />
+            <Route path="/borrow" element={<Borrow />} />
+            <Route path="/user/*" element={<User />} />
+            <Route
+              path="/login"
+              element={!user ? <Login /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/register"
+              element={!user ? <Register /> : <Navigate to="/" />}
+            />
+          </Routes>
+        </div>
+        <Footer />
       </div>
     </Router>
   );

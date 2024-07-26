@@ -32,10 +32,10 @@ function Account({ account }) {
       </div>
       <hr />
       <div className={styles.actionButtons}>
-        <a href=""><button className={styles.learnMore}>PAY ▿</button></a>
-        <a href=""><button className={styles.learnMore}>TRANSFER</button></a>
-        <a href=""><button className={styles.learnMore}>BUY ▿</button></a>
-        <a href=""><button className={styles.learnMore}>MANAGE ▿</button></a>
+        <a href=""><button className={styles.accountBtn}>PAY ▿</button></a>
+        <a href=""><button className={styles.accountBtn}>TRANSFER</button></a>
+        <a href=""><button className={styles.accountBtn}>BUY ▿</button></a>
+        <a href=""><button className={styles.accountBtn}>MANAGE ▿</button></a>
       </div>
     </div>
   );

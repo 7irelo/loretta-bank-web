@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './Register.module.css';
 
 function Register() {
-  const [id, setId] = useState(''); // Add state for ID
+  const [id, setId] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [address, setAddress] = useState(''); // Add state for address
-  const [occupation, setOccupation] = useState(''); // Add state for occupation
-  const [phone, setPhone] = useState(''); // Add state for phone
+  const [address, setAddress] = useState('');
+  const [occupation, setOccupation] = useState('');
+  const [phone, setPhone] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -146,6 +146,9 @@ function Register() {
         <button type="submit" className={styles.button}>Register</button>
         {error && <div className={styles.error}>Error: {error}</div>}
       </form>
+      <p className={styles.switch}>
+        Already have an account? <Link to="/login" className={styles.link}>Login here</Link>
+      </p>
     </div>
   );
 }
