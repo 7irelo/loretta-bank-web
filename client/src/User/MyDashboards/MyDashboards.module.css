@@ -1,0 +1,44 @@
+.card {
+    border-radius: 10px;
+    box-shadow: 5px 5px 25px hsl(0, 0%, 0%);
+    padding: 20px;
+    margin: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    
+    width: 700px;
+    margin: 20px;
+    height: auto;
+
+    background-color:white;padding-bottom: 0;
+}
+
+.dashboardsHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboardsHeader {
+    display: inline-block;
+}
+
+.addDashboardBtn {
+    width: 200px;
+    background: none;
+    border-radius: 10px;
+    border: solid #034078;
+    padding: 10px;
+}
+
+.dashboardRows ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+.dashboardRow ul li {
+    margin: 0;
+    padding: 0;
+}

@@ -1,6 +1,6 @@
 import { Link, Route, Routes, Navigate } from 'react-router-dom';
-import MyDashboards from './MyDashboards';
-import LinkSecureProfile from './LinkSecureProfile';
+import MyDashboards from './MyDashboards/MyDashboards';
+import LinkSecureProfile from './LinkSecureProfile/LinkSecureProfile';
 import ManageDetails from './ManageDetails';
 import OverdraftLimit from './OverdraftLimit';
 import ManageConsents from './ManageConsents';
@@ -31,7 +31,7 @@ function User() {
         <ul>
           {menuItems.map((item, index) => (
             <li key={index}>
-              <Link to={item.path}>{item.name}</Link>
+              <Link to={item.path}><a>{item.name}</a></Link>
             </li>
           ))}
         </ul>
