@@ -1,41 +1,57 @@
 import { Link, Route, Routes, Navigate } from 'react-router-dom';
 import MyDashboards from './MyDashboards/MyDashboards';
 import LinkSecureProfile from './LinkSecureProfile/LinkSecureProfile';
-import ManageDetails from './ManageDetails';
-import OverdraftLimit from './OverdraftLimit';
-import ManageConsents from './ManageConsents';
-import ManageThirdPartyAccess from './ManageThirdPartyAccess';
-import StatementDeliveryAddress from './StatementDeliveryAddress';
-import ManageDevices from './ManageDevices';
-import ViewPersonalDetails from './ViewPersonalDetails';
-import ManageOtpPreference from './ManageOtpPreference';
+import ManageDetails from './ManageDetails/ManageDetails';
+import OverdraftLimit from './OverdraftLimit/OverdraftLimit';
+import ManageConsents from './ManageConsents/ManageConsents';
+import ManageThirdPartyAccess from './ManageThirdPartyAccess/ManageThirdPartyAccess';
+import StatementDeliveryAddress from './StatementDeliveryAddress/StatementDeliveryAddress';
+import ManageDevices from './ManageDevices/ManageDevices';
+import ViewPersonalDetails from './ViewPersonalDetails/ViewPersonalDetails';
+import ManageOtpPreference from './ManageOtpPreference/ManageOtpPreference';
 import styles from './User.module.css';
 
 function User() {
-  const menuItems = [
-    { name: 'My Dashboards', path: '/user/dashboards' },
-    { name: 'Link & Secure Your Profile', path: '/user/link-secure' },
-    { name: 'Manage Your Details', path: '/user/manage-details' },
-    { name: 'Overdraft Limit', path: '/user/overdraft-limit' },
-    { name: 'Manage Your Consents', path: '/user/manage-consents' },
-    { name: 'Manage Third-Party Access', path: '/user/manage-third-party' },
-    { name: 'Statement Delivery Address', path: '/user/statement-delivery' },
-    { name: 'Manage Devices', path: '/user/manage-devices' },
-    { name: 'View Personal Details', path: '/user/view-personal-details' },
-    { name: 'Manage OTP Preference', path: '/user/manage-otp' },
-  ];
-
   return (
     <div className={styles.userContainer}>
       <nav className={styles.sidebar}>
         <ul>
-          {menuItems.map((item, index) => (
-            <li key={index}>
-              <Link to={item.path}><a>{item.name}</a></Link>
-            </li>
-          ))}
+          <li>
+            <h3>My Profile and settings</h3>
+          </li>
+          <li>
+            <Link to="/user/dashboards"><a>My Dashboards</a></Link>
+          </li>
+          <li>
+            <Link to="/user/link-secure"><a>Link & Secure Your Profile</a></Link>
+          </li>
+          <li>
+            <Link to="/user/manage-details"><a>Manage Your Details</a></Link>
+          </li>
+          <li>
+            <Link to="/user/overdraft-limit"><a>Overdraft Limit</a></Link>
+          </li>
+          <li>
+            <Link to="/user/manage-consents"><a>Manage Your Consents</a></Link>
+          </li>
+          <li>
+            <Link to="/user/manage-third-party"><a>Manage Third-Party Access</a></Link>
+          </li>
+          <li>
+            <Link to="/user/statement-delivery"><a>Statement Delivery Address</a></Link>
+          </li>
+          <li>
+            <Link to="/user/manage-devices"><a>Manage Devices</a></Link>
+          </li>
+          <li>
+            <Link to="/user/view-personal-details"><a>View Personal Details</a></Link>
+          </li>
+          <li>
+            <Link to="/user/manage-otp"><a>Manage OTP Preference</a></Link>
+          </li>
         </ul>
       </nav>
+      <hr/>
       <div className={styles.content}>
         <Routes>
           <Route path="/dashboards" element={<MyDashboards />} />

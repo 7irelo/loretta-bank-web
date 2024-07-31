@@ -1,13 +1,17 @@
 import styles from "./Footer.module.css";
-import logo from "../assets/logo.jpg";
+import logo from "../assets/logo.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopyright } from '@fortawesome/free-solid-svg-icons';
 
 function Footer() {
+  const date = new Date()
   return (
-    <footer>
-      <img src={logo} alt="Loretta Bank Logo" />
+    <footer className={styles.footer}>
+      <img src={logo} alt="Loretta Bank Logo" className={styles.footerLogo} />
+      <h4><FontAwesomeIcon icon={faCopyright}/> {date.getFullYear()} Loretta Bank</h4>
       <ul className={styles.footerLinks}>
-        <li><a href="#">Report fraud</a></li>
-        <li><a href="#">Report a problem</a></li>
+        <li><a>Report fraud</a></li>
+        <li><a>Report a problem</a></li>
       </ul>
     </footer>
   );

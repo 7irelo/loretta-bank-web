@@ -1,4 +1,4 @@
-header {
+.header {
     background: linear-gradient(90deg, #012A4A, #034078);
     box-shadow: 0 0 25px hsl(0, 0%, 0%);
     padding: 0;
@@ -9,7 +9,7 @@ header {
     margin: 0;
 }
 
-header a {
+.header a {
     text-decoration: none;
 }
 
@@ -24,14 +24,16 @@ header a {
 .logo {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .logo img {
-    width: 30px;
+    padding: 0;
+    width: 20px;
     height: auto;
     border-radius: 5px;
+    font-size: 1.8rem;
     transition: transform 0.3s ease;
-    display: inline;
 }
 
 .logo img:hover {
@@ -39,72 +41,96 @@ header a {
 }
 
 .logo h1 {
-    display: inline;
     padding-left: 15px;
     color: #FFFFFF;
     font-size: 1.8rem;
     font-weight: bold;
     margin: 0;
+    display: inline-block;
+}
+
+.logo h1:hover {
+    color: #034078;
 }
 
 .auth {
+    background-color: #012A4A;
     display: flex;
     align-items: center;
+    justify-content: space-evenly;
+    padding: 10px 20px;
+    border-radius: 40px;
+    margin: 0;
 }
 
-.dp {
-    border-radius: 50%;
-    height: 30px;
-    width: 30px;
-    transition: transform 0.3s ease;
-}
-
-.auth img:hover {
-    transform: scale(1.1);
+.auth:hover {
+    background: linear-gradient(90deg, #012A4A, #034078, #012A4A);
 }
 
 .auth li {
     margin: 0;
     padding: 0;
     list-style-type: none;
-    margin-left: 10px;
 }
 
 .auth a {
-    padding: 10px 20px;
     color: black;
     text-decoration: none;
     font-weight: bold;
 }
 
-.signOutContainer {
+.user {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    width: auto;
-    margin: 0;
+    border-radius: 20px;
+}
+
+.user:hover {
+    color: white;
+    background-color: black;
+}
+
+.firstName:hover {
+    color: white;
+}
+
+.dp {
     padding: 0;
+    margin: 0;
+    height: 30px;
+    transition: transform 0.3s ease;
+}
+
+.dp:hover {
+    transform: scale(1.1);
+}
+
+.firstName {
+    padding: 0 10px;
+    margin: 0;
 }
 
 .signOutButton {
-    padding: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    margin: 10px;
+    justify-content: space-between;
     background: none;
     border: none;
     color: white;
     border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
     cursor: pointer;
-    display: flex;
     align-items: center;
     gap: 0;
-    transition: background 0.3s ease, color 0.3s ease;
-    background: #012A4A;
+
 }
 
 .signOutButton a {
-    color: white;
+    color: black;
+    padding: 5px 10px;
+    margin: 0;
 }
 
 .lockIcon {
@@ -115,13 +141,13 @@ header a {
 }
 
 .signOutButton:hover {
-    transform: scale(1.05);
+    background-color: white;
     transition: transform 0.3s ease;
-    color: black;
+
 }
 
-.signOutButton:hover li {
-    color: white;
+.signOutButton:hover a {
+    color: black;
 }
 
 .hamburger {
@@ -135,15 +161,16 @@ header a {
     cursor: pointer;
 }
 
-nav {
+.navbar {
     background: linear-gradient(90deg, #034078, #012A4A);
+    margin: 0;
     margin-top: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-nav ul {
+.navbar ul {
     list-style-type: none;
     display: flex;
     align-items: center;
@@ -152,13 +179,18 @@ nav ul {
     padding: 0;
 }
 
-nav ul li {
+.home, .transact, .buy, .apply, .borrow {
     margin: 0 20px;
+    padding: 0;
 }
 
-nav ul li p {
+.navbar  ul li p:hover {
+    background-color: #012A4A;
+}
+
+.navbar  ul li p {
     color: #FFFFFF;
-    padding: 10px 20px;
+    padding: 10px;
     border-radius: 5px;
     text-decoration: none;
     font-weight: bold;
@@ -166,16 +198,16 @@ nav ul li p {
     cursor: pointer;
 }
 
-nav ul li.transact p::after,
-nav ul li.buy p::after,
-nav ul li.apply p::after {
+.navbar ul li.transact p::after,
+.navbar ul li.buy p::after,
+.navbar ul li.apply p::after {
     content: " ▾";
     font-size: 1.2rem;
     margin-left: 5px;
     color: #FFFFFF;
 }
 
-nav ul li a:hover {
+.navbar ul li a:hover {
     background-color: #034078;
     color: #FFFFFF;
     transform: translateY(-3px);
@@ -196,8 +228,9 @@ nav ul li a:hover {
     justify-content: center;
     margin-left: auto;
     margin-right: 30px;
-    margin-bottom: 10px;
     background: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .quickLinks::after {
@@ -291,10 +324,17 @@ nav ul li a:hover {
     text-align: left;
 }
 
+.transactDropDown h3, .buyDropDown h3, .applyDropDown h3 {
+    margin: 0;
+    display: block;
+    padding: 12px;
+    text-align: left;
+}
+
 .transactDropDown li, .buyDropDown li, .applyDropDown li {
     margin: 0;
     display: block;
-    padding: 6.5px;
+    padding: 7px;
     text-align: left;
 }
 
@@ -310,4 +350,18 @@ nav ul li a:hover {
     background-color: #F0F0F0;
     color: #012A4A;
     border-radius: 5px;
+}
+
+@media (max-width: 900px) {
+
+    .logo {
+        margin-bottom: 20px;
+    }
+    .navbar, .auth {
+        display: none;
+    }
+    .hamburger {
+        display: block;
+    }
+    
 }

@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
     const user = rows[0];
 
     if (!user) {
-      const response = { success: false, message: "User not found" };
+      const response = { success: false, message: "Incorrect username" };
       
       console.log(response)
       logResponse(404, "User not found", response);

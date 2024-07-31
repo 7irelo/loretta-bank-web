@@ -1,6 +1,7 @@
-footer {
+.footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     background-color: black;
     color: white;
     margin: 0;
@@ -18,18 +19,18 @@ footer {
 }
 
 .footerLinks a {
-    color: hsl(120, 100%, 14%);
+    color: #012A4A;
     margin: 0;
+    font-weight: bold;
     margin-top: 10px;
     padding: 10px;
     margin-left: 10px;
-    border: solid;
-    border-color: hsl(120, 100%, 14%);
+    border-radius: 5px;
+    background-color: rgb(20, 20, 20);
 }
 
 .footerLinks a:hover {
-    background-color: hsl(120, 100%, 14%);
-    color: black;
+    color: #034078;
     cursor: pointer;
 }
 
@@ -37,18 +38,40 @@ footer {
     color: white;
 }
 
-img {
+.footerLogo {
     width: 80px;
-    height: 50px;
 }
 
 @media (max-width: 900px) {
-    footer {
-        padding: 10px;
-    }
 
-    img {
+    .footer {
+        padding: 15px;
+    }
+    .footer h4 {
         display: none;
     }
+
+    .footerLogo {
+        width: 40px;
+    }
     
+}
+
+@media (max-width: 500px) {
+
+   
+    .footer {
+        padding: 15px;
+    }
+
+    .footerLogo {
+        width: 20px;
+    }
+    
+    .footerLinks a {
+        padding: 5px;
+        margin-left: 5px;
+        border-radius: 5px;
+        background-color: rgb(20, 20, 20);
+    }
 }
