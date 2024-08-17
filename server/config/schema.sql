@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS accounts (
     available_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     latest_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
     account_status VARCHAR NOT NULL DEFAULT 'Active' CHECK (account_status IN ('Active', 'Inactive', 'Closed')),
-    image_url VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -42,7 +41,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     account_id INTEGER REFERENCES accounts(id),
-    type VARCHAR NOT NULL,
+    transaction_type VARCHAR NOT NULL,
     amount DOUBLE PRECISION NOT NULL,
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     description VARCHAR,
