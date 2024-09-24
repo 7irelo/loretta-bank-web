@@ -1,5 +1,5 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./MyDashboards.module.css";
 
 function MyDashboards() {
@@ -21,15 +21,19 @@ function MyDashboards() {
         <tbody>
           <tr>
             <td>My personal dashboard</td>
-            <td>5678901256789012</td>
-            <td>Active</td>
-            <td><FontAwesomeIcon icon={faCheck} /></td>
+            <td>5678 9012 5678 9012</td>
+            <td className={styles.active}>Active</td>
+            <td>
+              <FontAwesomeIcon icon={faCheck} className={styles.checkIcon} />
+            </td>
           </tr>
           <tr>
             <td>Savings dashboard</td>
-            <td>6789012367890123</td>
-            <td>Inactive</td>
-            <td><FontAwesomeIcon icon={faTimes} /></td>
+            <td>6789 0123 6789 0123</td>
+            <td className={styles.inactive}>Inactive</td>
+            <td>
+              <FontAwesomeIcon icon={faTimes} className={styles.timesIcon} />
+            </td>
           </tr>
         </tbody>
       </table>

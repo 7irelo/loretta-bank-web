@@ -88,7 +88,7 @@
 
 .user:hover {
     color: white;
-    background-color: black;
+    background-color: rgb(0, 0, 0);
 }
 
 .firstName:hover {
@@ -351,6 +351,34 @@
     color: #012A4A;
     border-radius: 5px;
 }
+
+.applyDropDown ul li {
+    list-style-type: none;
+    margin: 10px 0;
+    padding: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .applyDropDown ul li:hover {
+    background-color: #034078; /* Change the color as desired */
+    transform: translateY(-3px); /* Slightly elevate the div on hover */
+    border-radius: 5px;
+  }
+  
+  .applyDropDown ul li a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .applyDropDown ul li:hover a {
+    color: white;
+  }
+  
+  .applyDropDown ul li div h1,
+  .applyDropDown ul li div small {
+    color: inherit; /* Inherit the hover color */
+  }
+  
 
 @media (max-width: 900px) {
 
