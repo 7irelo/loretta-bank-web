@@ -11,6 +11,7 @@ import Loading from './Loading';
 import './App.css';
 
 function App() {
+  
   // localStorage.removeItem("jwtToken")
   const [user, setUser] = useState(null);
   const [accounts, setAccounts] = useState([]);
