@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controller/authController");
-const verifyToken = require('../middleware/verifyToken');
+const verifyToken = require("../middleware/verifyToken");
 
 /**
  * @swagger
@@ -152,5 +152,7 @@ router.put("/update", verifyToken, authController.updateUser);
  *         description: Server error
  */
 router.patch("/patch", verifyToken, authController.patchUser);
+
+router.delete("/delete", verifyToken, authController.deleteUser);
 
 module.exports = router;
