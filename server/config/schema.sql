@@ -1,86 +1,153 @@
-DROP TABLE IF EXISTS customer_support, cards, loans, transactions, accounts, users CASCADE;
+-- Table: public.users
 
-DROP SEQUENCE IF EXISTS accounts_id_seq, transactions_id_seq, cards_id_seq, loans_id_seq, customer_support_id_seq CASCADE;
+CREATE TABLE IF NOT EXISTS public.users
+(
+    id character varying COLLATE pg_catalog."default" NOT NULL,
+    first_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    last_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    address character varying COLLATE pg_catalog."default" NOT NULL,
+    date_of_birth date NOT NULL,
+    occupation character varying COLLATE pg_catalog."default",
+    phone character varying COLLATE pg_catalog."default" NOT NULL,
+    email character varying COLLATE pg_catalog."default" NOT NULL,
+    username character varying COLLATE pg_catalog."default" NOT NULL,
+    password character varying COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT users_email_key UNIQUE (email),
+    CONSTRAINT users_username_key UNIQUE (username)
+)
+TABLESPACE pg_default;
 
-DO $$ DECLARE
-      r RECORD;
-    BEGIN
-      FOR r IN (SELECT typname FROM pg_type WHERE typname IN ('users', 'accounts', 'transactions', 'cards', 'loans', 'customer_support')) LOOP
-        EXECUTE 'DROP TYPE ' || quote_ident(r.typname) || ' CASCADE';
-      END LOOP;
-    END $$;
+ALTER TABLE IF EXISTS public.users
+    OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS users (
-      id VARCHAR PRIMARY KEY,
-      first_name VARCHAR(50) NOT NULL,
-      last_name VARCHAR(50) NOT NULL,
-      address VARCHAR NOT NULL,
-      date_of_birth DATE NOT NULL,
-      occupation VARCHAR,
-      phone VARCHAR NOT NULL,
-      email VARCHAR UNIQUE NOT NULL,
-      username VARCHAR UNIQUE NOT NULL,
-      password VARCHAR NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+-- Table: public.accounts
 
-CREATE TABLE IF NOT EXISTS accounts (
-    id SERIAL PRIMARY KEY,
-    account_number VARCHAR(13) NOT NULL,
-    name VARCHAR NOT NULL,
-    user_id VARCHAR REFERENCES users(id) NOT NULL,
-    account_type VARCHAR NOT NULL CHECK (account_type IN ('Savings', 'Cheque', 'Credit')),
-    available_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    latest_balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    account_status VARCHAR NOT NULL DEFAULT 'Active' CHECK (account_status IN ('Active', 'Inactive', 'Closed')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE IF NOT EXISTS public.accounts
+(
+    id integer NOT NULL DEFAULT nextval('accounts_id_seq'::regclass),
+    account_number character varying(13) COLLATE pg_catalog."default" NOT NULL,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    user_id character varying COLLATE pg_catalog."default" NOT NULL,
+    account_type character varying COLLATE pg_catalog."default" NOT NULL,
+    available_balance double precision NOT NULL DEFAULT 0.0,
+    latest_balance double precision NOT NULL DEFAULT 0.0,
+    account_status character varying COLLATE pg_catalog."default" NOT NULL DEFAULT 'Active'::character varying,
+    image_url character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT accounts_pkey PRIMARY KEY (id),
+    CONSTRAINT accounts_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT accounts_account_status_check CHECK (account_status::text = ANY (ARRAY['Active', 'Inactive', 'Closed']::text[])),
+    CONSTRAINT accounts_account_type_check CHECK (account_type::text = ANY (ARRAY['Savings', 'Cheque', 'Credit']::text[]))
+)
+TABLESPACE pg_default;
 
-CREATE TABLE IF NOT EXISTS transactions (
-    id SERIAL PRIMARY KEY,
-    account_id INTEGER REFERENCES accounts(id),
-    transaction_type VARCHAR NOT NULL,
-    amount DOUBLE PRECISION NOT NULL,
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    description VARCHAR,
-    journal_type VARCHAR
-);
+ALTER TABLE IF EXISTS public.accounts
+    OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS loans (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR REFERENCES users(id) NOT NULL,
-      account_id INTEGER REFERENCES accounts(id) NOT NULL,
-      loan_type VARCHAR NOT NULL CHECK (loan_type IN ('Personal', 'Mortgage', 'Auto', 'Student')),
-      amount DOUBLE PRECISION NOT NULL,
-      interest_rate DOUBLE PRECISION NOT NULL,
-      term INTEGER NOT NULL,
-      start_date DATE NOT NULL,
-      end_date DATE NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+-- Table: public.cards
 
-CREATE TABLE IF NOT EXISTS cards (
-    id SERIAL PRIMARY KEY,
-    user_id VARCHAR REFERENCES users(id) NOT NULL,
-    account_id INTEGER REFERENCES accounts(id) NOT NULL,
-    card_number VARCHAR(16) NOT NULL,
-    expiry_date DATE NOT NULL,
-    cvv VARCHAR(3) NOT NULL,
-    credit_limit DOUBLE PRECISION NOT NULL,
-    balance DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE IF NOT EXISTS public.cards
+(
+    id integer NOT NULL DEFAULT nextval('cards_id_seq'::regclass),
+    user_id character varying COLLATE pg_catalog."default" NOT NULL,
+    account_id integer NOT NULL,
+    card_number character varying(16) COLLATE pg_catalog."default" NOT NULL,
+    expiry_date date NOT NULL,
+    cvv character varying(3) COLLATE pg_catalog."default" NOT NULL,
+    credit_limit double precision NOT NULL,
+    balance double precision NOT NULL DEFAULT 0.0,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT cards_pkey PRIMARY KEY (id),
+    CONSTRAINT cards_account_id_fkey FOREIGN KEY (account_id)
+        REFERENCES public.accounts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT cards_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
 
-CREATE TABLE IF NOT EXISTS customer_support (
-      id SERIAL PRIMARY KEY,
-      user_id VARCHAR REFERENCES users(id) NOT NULL,
-      query TEXT NOT NULL,
-      response TEXT,
-      status VARCHAR NOT NULL CHECK (status IN ('Open', 'Pending', 'Resolved', 'Closed')),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+ALTER TABLE IF EXISTS public.cards
+    OWNER to postgres;
+
+-- Table: public.customer_support
+
+CREATE TABLE IF NOT EXISTS public.customer_support
+(
+    id integer NOT NULL DEFAULT nextval('customer_support_id_seq'::regclass),
+    user_id character varying COLLATE pg_catalog."default" NOT NULL,
+    query text COLLATE pg_catalog."default" NOT NULL,
+    response text COLLATE pg_catalog."default",
+    status character varying COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT customer_support_pkey PRIMARY KEY (id),
+    CONSTRAINT customer_support_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT customer_support_status_check CHECK (status::text = ANY (ARRAY['Open', 'Pending', 'Resolved', 'Closed']::text[]))
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.customer_support
+    OWNER to postgres;
+
+-- Table: public.loans
+
+CREATE TABLE IF NOT EXISTS public.loans
+(
+    id integer NOT NULL DEFAULT nextval('loans_id_seq'::regclass),
+    user_id character varying COLLATE pg_catalog."default" NOT NULL,
+    account_id integer NOT NULL,
+    loan_type character varying COLLATE pg_catalog."default" NOT NULL,
+    amount double precision NOT NULL,
+    interest_rate double precision NOT NULL,
+    term integer NOT NULL,
+    start_date date NOT NULL,
+    end_date date NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT loans_pkey PRIMARY KEY (id),
+    CONSTRAINT loans_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT loans_loan_type_check CHECK (loan_type::text = ANY (ARRAY['Personal', 'Mortgage', 'Auto', 'Student']::text[]))
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.loans
+    OWNER to postgres;
+
+-- Table: public.transactions
+
+CREATE TABLE IF NOT EXISTS public.transactions
+(
+    id integer NOT NULL DEFAULT nextval('transactions_id_seq'::regclass),
+    account_id integer,
+    transaction_type character varying COLLATE pg_catalog."default" NOT NULL,
+    amount double precision NOT NULL,
+    date timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    description character varying COLLATE pg_catalog."default",
+    journal_type character varying COLLATE pg_catalog."default",
+    CONSTRAINT transactions_pkey PRIMARY KEY (id),
+    CONSTRAINT transactions_account_id_fkey FOREIGN KEY (account_id)
+        REFERENCES public.accounts (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.transactions
+    OWNER to postgres;

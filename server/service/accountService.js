@@ -2,28 +2,34 @@ const { pool } = require("../config/database");
 const redisClient = require("../config/redis.config");
 const AccountMapper = require("../mappers/AccountMapper");
 
-const createAccount = async (userId, accountType) => {
+const createAccount = async (userId, accountType, accountDetails) => {
   try {
-    // Insert new account into the database
+    // Insert new account into the database, including image_url
     const insertQuery = `
-      INSERT INTO accounts (user_id, account_type)
-      VALUES ($1, $2)
+      INSERT INTO accounts (account_number, name, user_id, account_type, available_balance, latest_balance, account_status, image_url)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
     `;
-    const insertValues = [userId, accountType];
+    const insertValues = [
+      accountDetails.account_number,
+      accountDetails.name,
+      userId,
+      accountType,
+      accountDetails.available_balance,
+      accountDetails.latest_balance,
+      accountDetails.account_status,
+      accountDetails.image_url // Add image_url to the insert values
+    ];
     const { rows: accountRows } = await pool.query(insertQuery, insertValues);
     const account = accountRows[0];
 
-    // Check if account details are cached
+    // Fetch related data and cache
     const cacheKey = `account:${account.id}`;
     const cachedAccountData = await redisClient.get(cacheKey);
-
     if (cachedAccountData) {
-      console.log("Serving from cache");
       return JSON.parse(cachedAccountData);
     }
 
-    // Fetch account details, including related data
     const query = `
       SELECT 
         a.*, u.*, 
@@ -151,41 +157,42 @@ const getAccount = async (accountId, userId) => {
 };
 
 const updateAccount = async (
-  accountId,
-  userId,
-  accountType,
-  balance,
-  accountStatus
+  account_id,
+  user_id,
+  account_type, 
+  available_balance, // Include available_balance
+  latest_balance, // Include latest_balance
+  account_status
 ) => {
   try {
     const updateQuery = `
-        UPDATE accounts 
-        SET account_type = $1, available_balance = $2, account_status = $3, updated_at = CURRENT_TIMESTAMP
-        WHERE id = $4 AND user_id = $5
-        RETURNING *;
-      `;
+      UPDATE accounts 
+      SET account_type = $1, available_balance = $2, latest_balance = $3, account_status = $4, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $5 AND user_id = $6
+      RETURNING *;
+    `;
     const updateValues = [
-      accountType,
-      balance,
-      accountStatus,
-      accountId,
-      userId,
+      account_type, 
+      available_balance, // Pass available_balance
+      latest_balance, // Pass latest_balance
+      account_status,
+      account_id,
+      user_id,
     ];
+
     const { rows: updatedRows } = await pool.query(updateQuery, updateValues);
 
     if (!updatedRows[0]) {
       return null; // Account not found
     }
 
-    const accountData = await getAccount(accountId, userId);
-
-    // Cache the updated account data in Redis for 1 hour
-    const cacheKey = `account:${accountId}`;
+    const accountData = await getAccount(account_id, user_id);
+    const cacheKey = `account:${account_id}`;
     await redisClient.set(cacheKey, JSON.stringify(accountData), "EX", 60 * 60);
 
     return accountData;
   } catch (error) {
-    console.error(`Error updating account with ID ${accountId}:`, error);
+    console.error(`Error updating account with ID ${account_id}:`, error);
     throw error;
   }
 };

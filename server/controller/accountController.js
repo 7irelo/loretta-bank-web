@@ -4,11 +4,21 @@ const { logResponse } = require("../middleware/logger");
 
 const createAccount = async (req, res) => {
   try {
-    const { accountType } = req.body;
+    const { account_number, name, account_type, available_balance, latest_balance, account_status, image_url } = req.body;
     const userId = req.user.id;
 
+    // Create an object for account details, including image_url
+    const accountDetails = {
+      account_number,
+      name,
+      available_balance,
+      latest_balance,
+      account_status,
+      image_url // Add image_url to the account details
+    };
+
     // Delegate the logic to the service layer
-    const accountData = await accountService.createAccount(userId, accountType);
+    const accountData = await accountService.createAccount(userId, account_type, accountDetails);
 
     const response = {
       success: true,
@@ -71,13 +81,13 @@ const getAccount = async (req, res) => {
 };
 
 const updateAccount = async (req, res) => {
-  const { id: accountId } = req.params;
-  const { accountType, balance, accountStatus } = req.body;
-  const userId = req.user.id;
+  const { id: account_id } = req.params;
+  const { account_type, available_balance, latest_balance, account_status } = req.body; // Extract both balances
+  const user_id = req.user.id;
 
   try {
     // Delegate logic to the service layer
-    const accountData = await accountService.updateAccount(accountId, userId, accountType, balance, accountStatus);
+    const accountData = await accountService.updateAccount(account_id, user_id, account_type, available_balance, latest_balance, account_status);
 
     if (!accountData) {
       const response = { success: false, message: "Account not found" };
@@ -93,7 +103,7 @@ const updateAccount = async (req, res) => {
     logResponse(200, "Account updated successfully", response);
     return res.status(200).json(response);
   } catch (error) {
-    console.error(`Error updating account with ID ${accountId}:`, error);
+    console.error(`Error updating account with ID ${account_id}:`, error);
     logResponse(500, "Server error", error);
     return res.status(500).json({ success: false, message: "Server error", error });
   }

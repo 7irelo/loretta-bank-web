@@ -3,6 +3,7 @@ const accountController = require('../controller/accountController');
 const verifyToken = require('../middleware/verifyToken');
 const router = express.Router();
 
+// Apply authentication middleware for all routes                                           
 router.use(verifyToken);
 
 /**
@@ -12,53 +13,70 @@ router.use(verifyToken);
  *     Account:
  *       type: object
  *       required:
+ *         - account_number
+ *         - name
+ *         - user_id
  *         - account_type
  *         - available_balance
  *         - latest_balance
  *         - account_status
+ *         - image_url
  *       properties:
  *         id:
  *           type: integer
  *           description: The auto-generated account ID
+ *         account_number:
+ *           type: string
+ *           description: Unique 13-character account number
  *         name:
  *           type: string
- *           description: Account's name
+ *           description: Account name or label
  *         user_id:
  *           type: string
- *           description: Account holder's ID
+ *           description: ID of the user who owns the account
  *         account_type:
  *           type: string
- *           description: Account type (Cheque, Savings, Credit)
+ *           description: Type of the account (Savings, Cheque, Credit)
+ *           enum: [Savings, Cheque, Credit]
  *         available_balance:
  *           type: number
  *           format: double
- *           description: Account's available balance
+ *           description: The current available balance
+ *           default: 0.0
  *         latest_balance:
  *           type: number
  *           format: double
- *           description: Account's latest balance
+ *           description: The most recent balance
+ *           default: 0.0
  *         account_status:
  *           type: string
- *           description: Account status (Active, Inactive, Suspended)
+ *           description: Status of the account (Active, Inactive, Closed)
+ *           enum: [Active, Inactive, Closed]
+ *           default: Active
  *         image_url:
  *           type: string
- *           description: URL for the account's image
+ *           description: URL to the account's associated image
+ *           maxLength: 50
  *         created_at:
  *           type: string
  *           format: date-time
- *           description: Account creation date
+ *           description: Timestamp when the account was created
+ *           default: 'CURRENT_TIMESTAMP'
  *         updated_at:
  *           type: string
  *           format: date-time
- *           description: Last account update date
+ *           description: Timestamp when the account was last updated
+ *           default: 'CURRENT_TIMESTAMP'
  *       example:
  *         id: 1
- *         name: mymomoacc
- *         user_id: 0107096245082
- *         account_type: Cheque
+ *         account_number: "1234567890123"
+ *         name: "Personal Savings"
+ *         user_id: "0107096245082"
+ *         account_type: "Savings"
  *         available_balance: 7554.56
  *         latest_balance: 6508.88
- *         account_status: Active
+ *         account_status: "Active"
+ *         image_url: "https://example.com/image.png"
  */
 
 /**
@@ -75,9 +93,9 @@ router.use(verifyToken);
  *             $ref: '#/components/schemas/Account'
  *     responses:
  *       201:
- *         description: Account created successfully
+ *         description: Account successfully created
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 router.post('/', accountController.createAccount);
 
@@ -85,13 +103,19 @@ router.post('/', accountController.createAccount);
  * @swagger
  * /api/accounts:
  *   get:
- *     summary: Get all accounts
+ *     summary: Retrieve all accounts
  *     tags: [Account]
  *     responses:
  *       200:
- *         description: List of accounts
+ *         description: List of all accounts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Account'
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 router.get('/', accountController.getAccounts);
 
@@ -99,22 +123,22 @@ router.get('/', accountController.getAccounts);
  * @swagger
  * /api/accounts/{id}:
  *   get:
- *     summary: Get an account by ID
+ *     summary: Get account details by ID
  *     tags: [Account]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The account ID
+ *         description: Unique account ID
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Account details
+ *         description: Account details fetched successfully
  *       404:
  *         description: Account not found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 router.get('/:id', accountController.getAccount);
 
@@ -122,13 +146,13 @@ router.get('/:id', accountController.getAccount);
  * @swagger
  * /api/accounts/{id}:
  *   put:
- *     summary: Update an account by ID
+ *     summary: Fully update account by ID
  *     tags: [Account]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The account ID
+ *         description: Unique account ID
  *         schema:
  *           type: integer
  *     requestBody:
@@ -143,7 +167,7 @@ router.get('/:id', accountController.getAccount);
  *       404:
  *         description: Account not found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 router.put('/:id', accountController.updateAccount);
 
@@ -151,13 +175,13 @@ router.put('/:id', accountController.updateAccount);
  * @swagger
  * /api/accounts/{id}:
  *   patch:
- *     summary: Partially update an account by ID
+ *     summary: Partially update account by ID
  *     tags: [Account]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The account ID
+ *         description: Unique account ID
  *         schema:
  *           type: integer
  *     requestBody:
@@ -179,13 +203,13 @@ router.put('/:id', accountController.updateAccount);
  *                 description: Updated account status
  *     responses:
  *       200:
- *         description: Account updated successfully
+ *         description: Account partially updated successfully
  *       400:
  *         description: No fields to update
  *       404:
  *         description: Account not found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 router.patch('/:id', accountController.patchAccount);
 
@@ -199,7 +223,7 @@ router.patch('/:id', accountController.patchAccount);
  *       - in: path
  *         name: id
  *         required: true
- *         description: The account ID
+ *         description: Unique account ID
  *         schema:
  *           type: integer
  *     responses:
@@ -208,7 +232,7 @@ router.patch('/:id', accountController.patchAccount);
  *       404:
  *         description: Account not found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 router.delete('/:id', accountController.deleteAccount);
 

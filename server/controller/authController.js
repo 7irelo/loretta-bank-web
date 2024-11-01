@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { pool } = require("../config/database");
 const { logResponse } = require("../middleware/logger");
-const UserDTO = require("../dtos/UserDto");
 const UserMapper = require("../mappers/UserMapper");
 const redisClient = require("../config/redis.config");
 
@@ -41,16 +40,22 @@ const registerUser = async (req, res) => {
       return res.status(200).json(JSON.parse(cachedUserData));
     }
 
-    // Query to fetch the first 5 accounts, loans, and cards
+    // Query to fetch user details with accounts, loans, and cards
     const detailsQuery = `
       SELECT 
-        a.*, 
+        u.id AS user_id, u.first_name, u.last_name, u.email, u.date_of_birth, u.address, 
+        u.occupation, u.phone, u.username, u.password, u.created_at AS user_created_at, 
+        u.updated_at AS user_updated_at, 
+        a.id AS account_id, a.account_type, a.available_balance, a.latest_balance, 
+        a.account_status, a.created_at AS account_created_at, a.updated_at AS account_updated_at, 
         c.id AS card_id, c.card_number, c.expiry_date, c.cvv, c.credit_limit, c.balance AS card_balance, 
-        l.id AS loan_id, l.loan_type, l.amount AS loan_amount, l.interest_rate, l.term, l.start_date, l.end_date
-      FROM accounts a
-      LEFT JOIN cards c ON c.account_id = a.id
-      LEFT JOIN loans l ON l.account_id = a.id
-      WHERE a.user_id = $1
+        l.id AS loan_id, l.loan_type, l.amount AS loan_amount, l.interest_rate, l.term, 
+        l.start_date, l.end_date
+      FROM users u
+      LEFT JOIN accounts a ON u.id = a.user_id
+      LEFT JOIN cards c ON a.id = c.account_id
+      LEFT JOIN loans l ON a.id = l.account_id
+      WHERE u.id = $1
       LIMIT 5;
     `;
     const detailValues = [user.id];
@@ -77,10 +82,11 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res) => { 
   try {
     const username = req.body.username;
     const redisKey = `login:${username}`;
+    const userKey = `user:${username}`;
 
     // Check if JWT token and user data are cached in Redis
     const cachedToken = await redisClient.get(redisKey);
@@ -91,12 +97,11 @@ const loginUser = async (req, res) => {
         jwt.verify(cachedToken, process.env.JWT_TOKEN_SECRET);
 
         // Fetch cached user data
-        const cachedUser = await redisClient.get(`user:${username}`);
+        const cachedUser = await redisClient.get(userKey);
         const user = JSON.parse(cachedUser);
 
         const response = { auth: true, token: cachedToken, user };
         logResponse(200, "Cached token and user retrieved successfully", response);
-
         return res.header("auth-token", cachedToken).status(200).json(response);
       } catch (err) {
         // Token has expired, proceed to generate a new one
@@ -105,11 +110,25 @@ const loginUser = async (req, res) => {
     }
 
     // Proceed with DB query if no cached token
-    const query = `SELECT * FROM users u 
-                   LEFT JOIN accounts a ON u.id = a.user_id
-                   LEFT JOIN cards c ON a.id = c.account_id
-                   LEFT JOIN loans l ON a.id = l.account_id
-                   WHERE u.username = $1`;
+    const query = `
+      SELECT 
+        u.id AS user_id, u.first_name, u.last_name, u.email, u.date_of_birth, 
+        u.address, u.occupation, u.phone, u.username, u.password, 
+        u.created_at AS user_created_at, u.updated_at AS user_updated_at, 
+        a.id AS account_id, a.account_number, a.account_type, a.available_balance, 
+        a.latest_balance, a.account_status, a.created_at AS account_created_at, 
+        a.updated_at AS account_updated_at, 
+        c.id AS card_id, c.card_number, c.expiry_date, c.cvv, c.credit_limit, 
+        c.balance AS card_balance, 
+        l.id AS loan_id, l.loan_type, l.amount AS loan_amount, l.interest_rate, 
+        l.term, l.start_date, l.end_date
+      FROM users u
+      LEFT JOIN accounts a ON u.id = a.user_id
+      LEFT JOIN cards c ON a.id = c.account_id
+      LEFT JOIN loans l ON a.id = l.account_id
+      WHERE u.username = $1;
+    `;
+
     const { rows } = await pool.query(query, [username]);
 
     if (rows.length === 0) {
@@ -129,19 +148,17 @@ const loginUser = async (req, res) => {
 
     // Generate new JWT token
     const expiresIn = 86400; // 1 day in seconds
-    const token = jwt.sign({ id: user.id }, process.env.JWT_TOKEN_SECRET, {
-      expiresIn, // Token expiration
-    });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_TOKEN_SECRET, { expiresIn });
 
     // Store the new token in Redis
     await redisClient.set(redisKey, token, { EX: expiresIn });
 
     // Cache the user data in Redis
-    await redisClient.set(`user:${username}`, JSON.stringify(user), { EX: expiresIn });
+    await redisClient.set(userKey, JSON.stringify(user), { EX: expiresIn });
 
     const response = { auth: true, token, user };
     logResponse(200, "User logged in successfully", response);
-
+    
     res.header("auth-token", token).status(200).json(response);
   } catch (error) {
     console.error("Error logging in user:", error);
@@ -151,6 +168,7 @@ const loginUser = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
+  console.log(`You're trying to fetch user with id: ${req.user.id}`);
   try {
     const redisKey = `user:${req.user.id}`;
 
@@ -160,18 +178,27 @@ const getCurrentUser = async (req, res) => {
     if (cachedUser) {
       const response = JSON.parse(cachedUser); // Deserialize the cached user data
       logResponse(200, "Cached user fetched successfully", response);
-
       return res.status(200).json(response);
     }
 
     // Query DB if no cached user data found
     const query = `
-      SELECT u.*, a.*, c.*, l.* 
+      SELECT 
+        u.id AS user_id, u.first_name, u.last_name, u.email, u.date_of_birth, 
+        u.address, u.occupation, u.phone, u.username, u.password, 
+        u.created_at AS user_created_at, u.updated_at AS user_updated_at, 
+        a.id AS account_id, a.account_type, a.available_balance, 
+        a.latest_balance, a.account_status, a.created_at AS account_created_at, 
+        a.updated_at AS account_updated_at, 
+        c.id AS card_id, c.card_number, c.expiry_date, c.cvv, c.credit_limit, 
+        c.balance AS card_balance, 
+        l.id AS loan_id, l.loan_type, l.amount AS loan_amount, 
+        l.interest_rate, l.term, l.start_date, l.end_date
       FROM users u
       LEFT JOIN accounts a ON u.id = a.user_id
       LEFT JOIN cards c ON a.id = c.account_id
       LEFT JOIN loans l ON a.id = l.account_id
-      WHERE u.id = $1
+      WHERE u.id = $1;
     `;
     const { rows } = await pool.query(query, [req.user.id]);
 
@@ -195,7 +222,7 @@ const getCurrentUser = async (req, res) => {
 
     const response = user;
     logResponse(200, "Current user fetched successfully", response);
-
+    
     res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching current user:", error);
@@ -204,13 +231,32 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res) => { 
+const updateUser = async (req, res) => {
   try {
     const updates = Object.entries(req.body)
       .map(([key, value]) => `${key} = '${value}'`)
       .join(", ");
 
-    const query = `UPDATE users SET ${updates}, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *;`;
+    const updateQuery = `UPDATE users SET ${updates}, updated_at = CURRENT_TIMESTAMP WHERE id = $1;`;
+    await pool.query(updateQuery, [req.body.id]);
+
+    // Fetch the updated user data
+    const query = `
+      SELECT 
+        u.id AS user_id, u.first_name, u.last_name, u.email, u.date_of_birth, u.address, 
+        u.occupation, u.phone, u.username, u.password, u.created_at AS user_created_at, 
+        u.updated_at AS user_updated_at, 
+        a.id AS account_id, a.account_type, a.available_balance, a.latest_balance, 
+        a.account_status, a.created_at AS account_created_at, a.updated_at AS account_updated_at, 
+        c.id AS card_id, c.card_number, c.expiry_date, c.cvv, c.credit_limit, c.balance AS card_balance, 
+        l.id AS loan_id, l.loan_type, l.amount AS loan_amount, l.interest_rate, l.term, 
+        l.start_date, l.end_date
+      FROM users u
+      LEFT JOIN accounts a ON u.id = a.user_id
+      LEFT JOIN cards c ON a.id = c.account_id
+      LEFT JOIN loans l ON a.id = l.account_id
+      WHERE u.id = $1
+    `;
     const { rows } = await pool.query(query, [req.body.id]);
 
     if (!rows.length) {
@@ -219,12 +265,14 @@ const updateUser = async (req, res) => {
       return res.status(404).json(response);
     }
 
-    // Invalidate cached user in Redis
+    // Invalidate and update Redis cache
     const redisKey = `user:${req.body.id}`;
     await redisClient.del(redisKey);
-
-    // Use the UserMapper to map user data
+    
     const user = UserMapper.mapUserData(rows);
+
+    // Cache the updated user data in Redis
+    await redisClient.set(redisKey, JSON.stringify(user), { EX: 86400 });
 
     const response = {
       success: true,
@@ -246,8 +294,27 @@ const patchUser = async (req, res) => {
     const updates = Object.entries(req.body)
       .map(([key, value]) => `${key} = '${value}'`)
       .join(", ");
-    const query = `UPDATE users SET ${updates}, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *;`;
 
+    const updateQuery = `UPDATE users SET ${updates}, updated_at = CURRENT_TIMESTAMP WHERE id = $1;`;
+    await pool.query(updateQuery, [req.user.id]);
+
+    // Fetch the updated user data
+    const query = `
+      SELECT 
+        u.id AS user_id, u.first_name, u.last_name, u.email, u.date_of_birth, u.address, 
+        u.occupation, u.phone, u.username, u.password, u.created_at AS user_created_at, 
+        u.updated_at AS user_updated_at, 
+        a.id AS account_id, a.account_type, a.available_balance, a.latest_balance, 
+        a.account_status, a.created_at AS account_created_at, a.updated_at AS account_updated_at, 
+        c.id AS card_id, c.card_number, c.expiry_date, c.cvv, c.credit_limit, c.balance AS card_balance, 
+        l.id AS loan_id, l.loan_type, l.amount AS loan_amount, l.interest_rate, l.term, 
+        l.start_date, l.end_date
+      FROM users u
+      LEFT JOIN accounts a ON u.id = a.user_id
+      LEFT JOIN cards c ON a.id = c.account_id
+      LEFT JOIN loans l ON a.id = l.account_id
+      WHERE u.id = $1
+    `;
     const { rows } = await pool.query(query, [req.user.id]);
 
     if (!rows.length) {
@@ -256,11 +323,14 @@ const patchUser = async (req, res) => {
       return res.status(404).json(response);
     }
 
-    // Invalidate cached user in Redis
+    // Invalidate and update Redis cache
     const redisKey = `user:${req.user.id}`;
     await redisClient.del(redisKey);
-
+    
     const user = UserMapper.mapUserData(rows);
+
+    // Cache the updated user data in Redis
+    await redisClient.set(redisKey, JSON.stringify(user), { EX: 86400 });
 
     const response = {
       success: true,
@@ -300,7 +370,9 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     console.error(`Error deleting user with ID ${id}:`, error);
     logResponse(500, "Server error", error);
-    return res.status(500).json({ success: false, message: "Server error", error });
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error", error });
   }
 };
 
@@ -310,5 +382,5 @@ module.exports = {
   getCurrentUser,
   updateUser,
   patchUser,
-  deleteUser
+  deleteUser,
 };
